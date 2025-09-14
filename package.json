@@ -1,6 +1,6 @@
 {
   "name": "rod-cli",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "ROD CLI - Rule-Oriented Development toolkit for specification-driven development",
   "main": "dist/cli.js",
   "bin": {
@@ -30,7 +30,7 @@
     "template",
     "ai-assistant"
   ],
-  "author": "Spec Kit Team",
+  "author": "rainmen-xia",
   "license": "MIT",
   "dependencies": {
     "commander": "^11.0.0",
