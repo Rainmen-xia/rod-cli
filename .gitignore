@@ -47,3 +47,4 @@ Thumbs.db
 # Test artifacts
 .nyc_output
 junit.xml
+reference/

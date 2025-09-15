@@ -46,17 +46,11 @@ export class LocalTemplateGenerator {
       // Ensure project directory exists
       await fs.mkdir(config.projectPath, { recursive: true });
 
-      // 1. Copy base templates (language agnostic)
-      await this.copyBaseTemplates(config.projectPath, filesCreated);
+      // 1. Create .specify directory for common content
+      await this.createSpecifyDirectory(config, filesCreated);
 
-      // 2. Generate AI-specific command files
+      // 2. Generate AI-specific command files (in AI-specific directory)
       await this.generateAICommands(config, filesCreated);
-
-      // 3. Copy appropriate scripts based on platform
-      await this.copyScripts(config, filesCreated);
-
-      // 4. Copy memory/constitution files
-      await this.copyMemoryFiles(config.projectPath, filesCreated);
 
       // 5. Generate AI-specific configuration files
       await this.generateAIConfig(config, filesCreated);
@@ -97,10 +91,44 @@ export class LocalTemplateGenerator {
   }
 
   /**
+   * Get the AI-specific directory name for commands
+   */
+  private getAIDirectoryName(aiAssistant: AIAssistant): string {
+    switch (aiAssistant) {
+      case AIAssistant.CLAUDE:
+        return '.claude';
+      case AIAssistant.CURSOR:
+        return '.cursor';
+      case AIAssistant.GEMINI:
+        return '.gemini';
+      case AIAssistant.COPILOT:
+        return '.github'; // Copilot uses .github/prompts
+      default:
+        return '.specify';
+    }
+  }
+
+  /**
+   * Create .specify directory with common content
+   */
+  private async createSpecifyDirectory(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
+    const specifyDir = path.join(config.projectPath, '.specify');
+    await fs.mkdir(specifyDir, { recursive: true });
+
+    // 1. Copy base templates
+    await this.copyBaseTemplates(path.join(specifyDir, 'templates'), filesCreated);
+
+    // 2. Copy scripts
+    await this.copyScripts(config, filesCreated);
+
+    // 3. Copy memory files
+    await this.copyMemoryFiles(path.join(specifyDir, 'memory'), filesCreated);
+  }
+
+  /**
    * Copy base template files (spec, plan, tasks templates)
    */
-  private async copyBaseTemplates(projectPath: string, filesCreated: string[]): Promise<void> {
-    const templatesDir = path.join(projectPath, 'templates');
+  private async copyBaseTemplates(templatesDir: string, filesCreated: string[]): Promise<void> {
     await fs.mkdir(templatesDir, { recursive: true });
 
     const baseTemplates = [
@@ -127,15 +155,32 @@ export class LocalTemplateGenerator {
    * Generate AI-specific command files
    */
   private async generateAICommands(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
-    const commandsDir = path.join(config.projectPath, 'commands');
+    // Commands go in AI-specific directories
+    const aiDir = this.getAIDirectoryName(config.aiAssistant);
+    const commandsSubdir = config.aiAssistant === AIAssistant.COPILOT ? 'prompts' : 'commands';
+    const commandsDir = path.join(config.projectPath, aiDir, commandsSubdir);
     await fs.mkdir(commandsDir, { recursive: true });
 
     const commands = ['specify', 'plan', 'tasks'];
     
     for (const command of commands) {
       const commandContent = await this.generateCommandFile(command, config);
-      const destPath = path.join(commandsDir, `${command}.md`);
       
+      // Different file extensions based on AI assistant
+      let filename: string;
+      switch (config.aiAssistant) {
+        case AIAssistant.GEMINI:
+          filename = `${command}.toml`;
+          break;
+        case AIAssistant.COPILOT:
+          filename = `${command}.prompt.md`;
+          break;
+        default: // CLAUDE, CURSOR
+          filename = `${command}.md`;
+          break;
+      }
+      
+      const destPath = path.join(commandsDir, filename);
       await fs.writeFile(destPath, commandContent, 'utf8');
       filesCreated.push(destPath);
     }
@@ -152,7 +197,7 @@ export class LocalTemplateGenerator {
       
       // Replace script references with the appropriate script type
       const scriptExtension = config.scriptType === ScriptType.BASH ? 'sh' : 'ps1';
-      const scriptPath = `scripts/${config.scriptType === ScriptType.BASH ? 'bash' : 'powershell'}`;
+      const scriptPath = `.specify/scripts/${config.scriptType === ScriptType.BASH ? 'bash' : 'powershell'}`;
       
       // Update script references in the template
       content = content.replace(
@@ -180,7 +225,8 @@ export class LocalTemplateGenerator {
    */
   private async copyScripts(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
     const scriptsSourceDir = path.join(__dirname, '../../scripts');
-    const scriptsDestDir = path.join(config.projectPath, 'scripts');
+    // Scripts always go in .specify directory
+    const scriptsDestDir = path.join(config.projectPath, '.specify', 'scripts');
     
     // Copy the selected script type
     const scriptSubdir = config.scriptType === ScriptType.BASH ? 'bash' : 'powershell';
@@ -208,9 +254,8 @@ export class LocalTemplateGenerator {
   /**
    * Copy memory/constitution files
    */
-  private async copyMemoryFiles(projectPath: string, filesCreated: string[]): Promise<void> {
+  private async copyMemoryFiles(memoryDestDir: string, filesCreated: string[]): Promise<void> {
     const memorySourceDir = path.join(__dirname, '../../memory');
-    const memoryDestDir = path.join(projectPath, 'memory');
     
     await fs.mkdir(memoryDestDir, { recursive: true });
     
@@ -235,13 +280,13 @@ export class LocalTemplateGenerator {
         await this.generateClaudeConfig(config, filesCreated);
         break;
       case AIAssistant.COPILOT:
-        await this.generateCopilotConfig(config, filesCreated);
+        // Copilot doesn't generate additional config files
         break;
       case AIAssistant.GEMINI:
         await this.generateGeminiConfig(config, filesCreated);
         break;
       case AIAssistant.CURSOR:
-        await this.generateCursorConfig(config, filesCreated);
+        // Cursor doesn't generate additional config files
         break;
     }
   }
@@ -312,23 +357,6 @@ export class LocalTemplateGenerator {
     filesCreated.push(configPath);
   }
 
-  /**
-   * Generate Copilot-specific configuration
-   */
-  private async generateCopilotConfig(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
-    const copilotConfig = `# GitHub Copilot Configuration
-# This project uses Spec-Driven Development with GitHub Copilot
-
-## Usage
-- Use @workspace to get project context
-- Use the /specify, /plan, and /tasks commands for structured development
-- Scripts are available in the scripts/${config.scriptType === ScriptType.BASH ? 'bash' : 'powershell'} directory
-`;
-
-    const configPath = path.join(config.projectPath, 'COPILOT.md');
-    await fs.writeFile(configPath, copilotConfig, 'utf8');
-    filesCreated.push(configPath);
-  }
 
   /**
    * Generate Gemini-specific configuration
@@ -345,29 +373,6 @@ export class LocalTemplateGenerator {
     filesCreated.push(configPath);
   }
 
-  /**
-   * Generate Cursor-specific configuration
-   */
-  private async generateCursorConfig(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
-    const cursorConfig = `# Cursor IDE Configuration for Spec-Driven Development
-
-This project uses Spec-Driven Development workflow optimized for Cursor IDE.
-
-## Available Commands
-- Use Ctrl+K (Cmd+K) to trigger code generation
-- The project includes /specify, /plan, and /tasks commands
-- Scripts are available in scripts/${config.scriptType === ScriptType.BASH ? 'bash' : 'powershell'}/
-
-## Workflow
-1. Create specifications using /specify
-2. Generate implementation plans using /plan  
-3. Break down into tasks using /tasks
-`;
-
-    const configPath = path.join(config.projectPath, 'CURSOR.md');
-    await fs.writeFile(configPath, cursorConfig, 'utf8');
-    filesCreated.push(configPath);
-  }
 }
 
 // Utility function

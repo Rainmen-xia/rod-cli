@@ -66,6 +66,7 @@ rod check --verbose
 
 ### Core Components
 
+
 ```
 src/
 ├── cli.ts                    # Main CLI entry point
@@ -309,8 +310,8 @@ Overall Status:
 
 ```bash
 # Clone repository
-git clone https://github.com/github/spec-kit.git
-cd spec-kit/spec-kit-node
+git https://github.com/Rainmen-xia/rod-cli.git
+cd rod-cli
 
 # Install dependencies
 npm install
@@ -522,6 +523,23 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - **80% faster** project initialization
 - **40% less** memory usage
 - **100% reliable** in offline environments
+
+## Acknowledgments
+
+This project is inspired by and references the excellent [spec-kit](https://github.com/github/spec-kit) project. We extend our gratitude to the GitHub team for pioneering specification-driven development workflows and providing the foundational concepts that made ROD CLI possible.
+
+### Key Inspirations from spec-kit:
+- 📋 **Specification-driven workflow patterns**
+- 🤖 **Multi-AI assistant integration approach**
+- 📁 **Project structure and template organization**
+- 🔧 **Command-based development methodology**
+
+### ROD CLI Improvements:
+- 🔄 **NPM-based versioning**: No GitHub downloads, avoids corporate network restrictions
+- 🏢 **Corporate network friendly**: Works completely offline and in restricted environments
+- ⚡ **Local template generation**: Built-in templates eliminate network dependencies
+- 🎯 **TypeScript implementation**: Full type safety and modern development experience
+- 🌐 **Enhanced cross-platform support**: Better Windows/Unix compatibility
 
 ---
 
