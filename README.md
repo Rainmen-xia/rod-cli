@@ -3,7 +3,6 @@
 > Rule-Oriented Development toolkit for specification-driven development
 
 [![npm version](https://badge.fury.io/js/rod-cli.svg)](https://badge.fury.io/js/rod-cli)
-[![Node.js CI](https://github.com/github/spec-kit/workflows/Node.js%20CI/badge.svg)](https://github.com/github/spec-kit/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Overview
@@ -31,8 +30,8 @@ npm install -g rod-cli
 ### Local Development
 
 ```bash
-git clone https://github.com/github/spec-kit.git
-cd spec-kit/spec-kit-node
+git clone https://github.com/Rainmen-xia/rod-cli.git
+cd rod-cli
 npm install
 npm run build
 ```
@@ -310,7 +309,7 @@ Overall Status:
 
 ```bash
 # Clone repository
-git https://github.com/Rainmen-xia/rod-cli.git
+git clone https://github.com/Rainmen-xia/rod-cli.git
 cd rod-cli
 
 # Install dependencies
@@ -494,9 +493,9 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/github/spec-kit/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/github/spec-kit/discussions)
-- **Documentation**: [Spec Kit Docs](https://github.com/github/spec-kit/wiki)
+- **Issues**: [GitHub Issues](https://github.com/Rainmen-xia/rod-cli/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Rainmen-xia/rod-cli/discussions)
+- **Documentation**: [ROD Docs](https://github.com/Rainmen-xia/rod-cli/wiki)
 
 ## Changelog
 
@@ -523,23 +522,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - **80% faster** project initialization
 - **40% less** memory usage
 - **100% reliable** in offline environments
-
-## Acknowledgments
-
-This project is inspired by and references the excellent [spec-kit](https://github.com/github/spec-kit) project. We extend our gratitude to the GitHub team for pioneering specification-driven development workflows and providing the foundational concepts that made ROD CLI possible.
-
-### Key Inspirations from spec-kit:
-- 📋 **Specification-driven workflow patterns**
-- 🤖 **Multi-AI assistant integration approach**
-- 📁 **Project structure and template organization**
-- 🔧 **Command-based development methodology**
-
-### ROD CLI Improvements:
-- 🔄 **NPM-based versioning**: No GitHub downloads, avoids corporate network restrictions
-- 🏢 **Corporate network friendly**: Works completely offline and in restricted environments
-- ⚡ **Local template generation**: Built-in templates eliminate network dependencies
-- 🎯 **TypeScript implementation**: Full type safety and modern development experience
-- 🌐 **Enhanced cross-platform support**: Better Windows/Unix compatibility
 
 ---
 
