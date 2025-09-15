@@ -114,10 +114,8 @@ export function validateCLIConfig(config: Partial<CLIConfig>): ConfigValidationR
     errors.push(`Invalid AI assistant: ${config.aiAssistant}`);
   }
 
-  // Validate script type
-  if (!config.scriptType) {
-    errors.push('Script type is required');
-  } else if (!Object.values(ScriptType).includes(config.scriptType)) {
+  // Validate script type (optional - will be auto-detected if not provided)
+  if (config.scriptType && !Object.values(ScriptType).includes(config.scriptType)) {
     errors.push(`Invalid script type: ${config.scriptType}`);
   }
 

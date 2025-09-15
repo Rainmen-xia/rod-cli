@@ -55,7 +55,7 @@ program
   .description('Initialize a new ROD project with rule-oriented development structure')
   .argument('[project-name]', 'Name for your new project directory')
   .option('--ai <assistant>', 'AI assistant to use', validateAIAssistant)
-  .option('--script <type>', 'Script type to use', validateScriptType)
+  .option('--script <type>', 'Script type to use (auto-detected if not specified)', validateScriptType)
   .option('--here', 'Initialize project in current directory', false)
   .option('--no-git', 'Skip git repository initialization', false)
   .option('--skip-tls', 'Skip SSL/TLS verification', false)
@@ -161,7 +161,7 @@ Examples:
   ${chalk.gray('# Check system requirements')}
   ${chalk.cyan('rod check --verbose')}
 
-For more information, visit: ${chalk.blue('https://github.com/github/spec-kit')}
+For more information, visit: ${chalk.blue('https://github.com/Rainmen-xia/rod-cli.git')}
 `);
 
 // Validation functions

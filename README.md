@@ -46,10 +46,10 @@ npm run build
 rod init my-project --ai claude
 
 # Initialize in current directory with GitHub Copilot
-rod init --here --ai copilot --script ps
+rod init --here --ai copilot  
 
 # Create project with Gemini and bash scripts
-rod init my-app --ai gemini --script sh
+rod init my-app --ai gemini  
 ```
 
 ### Check System Requirements

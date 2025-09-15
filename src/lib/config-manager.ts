@@ -100,8 +100,8 @@ export class ConfigManager {
     
     if (partialConfig.scriptType) {
       builder.setScriptType(partialConfig.scriptType);
-    } else if (!defaults.scriptType) {
-      // If no script type provided and no default, auto-detect
+    } else {
+      // Always auto-detect if no script type provided
       builder.setScriptType(this.autoDetectScriptType());
     }
     
@@ -154,6 +154,8 @@ export class ConfigManager {
    * Auto-detect script type based on platform
    */
   autoDetectScriptType(): ScriptType {
+    // Auto-detect based on platform
+    // Windows: PowerShell, Others (macOS, Linux): Bash
     return process.platform === 'win32' ? ScriptType.POWERSHELL : ScriptType.BASH;
   }
 
