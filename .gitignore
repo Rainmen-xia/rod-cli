@@ -48,3 +48,5 @@ Thumbs.db
 .nyc_output
 junit.xml
 reference/
+
+tests/test-project/
