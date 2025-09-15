@@ -18,7 +18,7 @@ import {
   getCheckCommandHelp 
 } from './commands/check';
 import { ExitCode } from './contracts/cli-interface';
-import { AIAssistant, ScriptType } from './types/cli-config';
+import { AIAssistant, ScriptType, WorkflowMode } from './types/cli-config';
 
 // Package information
 const packageInfo = require('../package.json');
@@ -56,6 +56,7 @@ program
   .argument('[project-name]', 'Name for your new project directory')
   .option('--ai <assistant>', 'AI assistant to use', validateAIAssistant)
   .option('--script <type>', 'Script type to use (auto-detected if not specified)', validateScriptType)
+  .option('--workflow <mode>', 'Workflow mode to use (roadmap, legacy)', validateWorkflowMode, WorkflowMode.ROADMAP)
   .option('--here', 'Initialize project in current directory', false)
   .option('--no-git', 'Skip git repository initialization', false)
   .option('--skip-tls', 'Skip SSL/TLS verification', false)
@@ -68,6 +69,7 @@ program
         projectName,
         ai: options.ai as AIAssistant,
         script: options.script as ScriptType,
+        workflow: options.workflow as WorkflowMode,
         here: options.here,
         noGit: !options.git, // Commander negates no-git to git
         skipTls: options.skipTls,
@@ -179,6 +181,14 @@ function validateScriptType(value: string): ScriptType {
     throw new Error(`Invalid script type '${value}'. Valid options: ${validValues.join(', ')}`);
   }
   return value as ScriptType;
+}
+
+function validateWorkflowMode(value: string): WorkflowMode {
+  const validValues = Object.values(WorkflowMode);
+  if (!validValues.includes(value as WorkflowMode)) {
+    throw new Error(`Invalid workflow mode '${value}'. Valid options: ${validValues.join(', ')}`);
+  }
+  return value as WorkflowMode;
 }
 
 // Handle no command provided

@@ -123,7 +123,7 @@ export class DownloadError extends Error {
 // Configuration
 export interface GitHubConfig {
   owner: string;       // 'github'
-  repo: string;        // 'spec-kit'  
+  repo: string;        // 'rod'  
   baseUrl: string;     // 'https://api.github.com'
   timeout: number;     // Request timeout in ms
   retries: number;     // Number of retry attempts
@@ -132,11 +132,11 @@ export interface GitHubConfig {
 
 export const DEFAULT_GITHUB_CONFIG: GitHubConfig = {
   owner: 'github',
-  repo: 'spec-kit',
+  repo: 'rod',
   baseUrl: 'https://api.github.com',
   timeout: 30000,
   retries: 3,
-  userAgent: 'spec-kit-node-cli'
+  userAgent: 'rod-node-cli'
 };
 
 // Rate Limiting

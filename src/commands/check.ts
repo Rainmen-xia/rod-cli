@@ -252,14 +252,14 @@ export function getCheckCommandHelp(): string {
 Check system requirements and tool availability
 
 Usage:
-  spec-kit check [options]
+  rod check [options]
 
 Options:
   --verbose, -v         Show detailed information including paths and install hints
 
 Examples:
-  spec-kit check                    # Basic system check
-  spec-kit check --verbose         # Detailed system check
+  rod check                    # Basic system check
+  rod check --verbose         # Detailed system check
 
 Exit Codes:
   0    All requirements met (or warnings only)

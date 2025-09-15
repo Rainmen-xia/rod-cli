@@ -29,6 +29,7 @@ export interface InitCommandArgs extends CLIArgs {
   projectName?: string;
   ai?: 'claude' | 'copilot' | 'gemini' | 'cursor' | 'codebuddy';
   script?: 'sh' | 'ps';
+  workflow?: 'legacy' | 'roadmap';
   here?: boolean;
   noGit?: boolean;
   skipTls?: boolean;
@@ -64,6 +65,13 @@ export const CLI_COMMANDS: CLICommand[] = [
         description: 'Script type to use',
         type: 'string', 
         choices: ['sh', 'ps']
+      },
+      {
+        name: 'workflow',
+        description: 'Workflow mode to use',
+        type: 'string',
+        choices: ['legacy', 'roadmap'],
+        default: 'roadmap'
       },
       {
         name: 'here',

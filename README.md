@@ -1,33 +1,35 @@
-# ROD CLI - Rule-Oriented Development
+# ROD CLI - 规则导向开发
 
-> Rule-Oriented Development toolkit for specification-driven development
+> 规则导向开发工具包，用于规范驱动开发
+
+**[English](README.en.md) | 中文**
 
 [![npm version](https://badge.fury.io/js/rod-cli.svg)](https://badge.fury.io/js/rod-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Overview
+## 概述
 
-ROD CLI (Rule-Oriented Development) is a modern, TypeScript-based toolkit that emphasizes rule-driven and specification-driven development. It provides a complete workflow for creating, planning, and implementing software features through structured specifications and clear development rules.
+ROD CLI（规则导向开发）是一个现代的、基于 TypeScript 的工具包，强调规则驱动和规范驱动的开发。它通过结构化规范和清晰的开发规则，提供了完整的软件功能创建、规划和实施工作流程。
 
-### Key Features
+### 主要特性
 
-- 🚀 **Local Template Generation**: No network dependencies, works offline
-- 🌐 **Cross-Platform Support**: Windows, macOS, and Linux
-- 🤖 **Multi-AI Assistant Support**: Claude, GitHub Copilot, Gemini, Cursor
-- ⚡ **Lightning Fast**: Local template generation vs. network downloads
-- 🔧 **TypeScript First**: Full type safety and modern development experience
-- 🧪 **Test-Driven Development**: Comprehensive test coverage with Jest
-- 📦 **Zero Network Dependencies**: Works in corporate/internal networks
+- 🚀 **本地模板生成**：无网络依赖，离线工作
+- 🌐 **跨平台支持**：Windows、macOS 和 Linux
+- 🤖 **多 AI 助手支持**：Claude、GitHub Copilot、Gemini、Cursor、Codebuddy
+- ⚡ **闪电般快速**：本地模板生成 vs 网络下载
+- 🔧 **TypeScript 优先**：完整类型安全和现代开发体验
+- 🧪 **测试驱动开发**：Jest 全面测试覆盖
+- 📦 **零网络依赖**：在企业/内部网络中工作
 
-## Installation
+## 安装
 
-### Global Installation (Recommended)
+### 全局安装（推荐）
 
 ```bash
 npm install -g rod-cli
 ```
 
-### Local Development
+### 本地开发
 
 ```bash
 git clone https://github.com/Rainmen-xia/rod-cli.git
@@ -36,64 +38,66 @@ npm install
 npm run build
 ```
 
-## Quick Start
+## 快速开始
 
-### Initialize a New ROD Project
+### 初始化新的 ROD 项目
 
 ```bash
-# Create a new project with Claude assistant
+# 使用 Claude 助手创建新项目
 rod init my-project --ai claude
 
-# Initialize in current directory with GitHub Copilot
+# 在当前目录使用 GitHub Copilot 初始化
 rod init --here --ai copilot  
 
-# Create project with Gemini and bash scripts
-rod init my-app --ai gemini  
+# 使用 Gemini 和 bash 脚本创建项目
+rod init my-app --ai gemini
+
+# 使用 Codebuddy 助手初始化
+rod init my-project --ai codebuddy
 ```
 
-### Check System Requirements
+### 检查系统要求
 
 ```bash
-# Basic system check
+# 基本系统检查
 rod check
 
-# Detailed system information
+# 详细系统信息
 rod check --verbose
 ```
 
-## Architecture
+## 架构
 
-### Core Components
-
+### 核心组件
 
 ```
 src/
-├── cli.ts                    # Main CLI entry point
-├── commands/                 # Command implementations
-│   ├── init.ts              # Project initialization
-│   └── check.ts             # System validation
-├── lib/                     # Core business logic
-│   ├── local-template-generator.ts  # Template generation
-│   ├── config-manager.ts    # Configuration management
-│   └── tool-checker.ts      # System tool validation
-├── types/                   # TypeScript type definitions
-│   ├── cli-config.ts        # Configuration types
-│   ├── project-template.ts  # Template types
-│   └── results.ts           # Result formatting
-└── contracts/               # Interface contracts
-    ├── cli-interface.ts     # CLI contracts
-    └── file-operations.ts   # File operation contracts
+├── cli.ts                    # 主 CLI 入口点
+├── commands/                 # 命令实现
+│   ├── init.ts              # 项目初始化
+│   └── check.ts             # 系统验证
+├── lib/                     # 核心业务逻辑
+│   ├── local-template-generator.ts  # 模板生成
+│   ├── config-manager.ts    # 配置管理
+│   └── tool-checker.ts      # 系统工具验证
+├── types/                   # TypeScript 类型定义
+│   ├── cli-config.ts        # 配置类型
+│   ├── project-template.ts  # 模板类型
+│   └── results.ts           # 结果格式化
+└── contracts/               # 接口契约
+    ├── cli-interface.ts     # CLI 契约
+    └── file-operations.ts   # 文件操作契约
 ```
 
-### Local Template System
+### 本地模板系统
 
-The Node.js version uses a revolutionary **local template generation** approach:
+Node.js 版本使用革命性的**本地模板生成**方法：
 
 ```typescript
-// Old: Network-dependent
+// 旧方式：依赖网络
 await downloadFromGitHub(template)
 
-// New: Local generation
+// 新方式：本地生成
 const generator = new LocalTemplateGenerator()
 await generator.generateTemplate({
   aiAssistant: 'claude',
@@ -102,429 +106,487 @@ await generator.generateTemplate({
 })
 ```
 
-#### Benefits of Local Generation
+#### 本地生成的优势
 
-| Feature | GitHub Download | Local Generation |
+| 特性 | GitHub 下载 | 本地生成 |
 |---------|----------------|------------------|
-| **Network Dependency** | ❌ Required | ✅ None |
-| **Corporate Networks** | ❌ Often blocked | ✅ Always works |
-| **Speed** | 🐌 Slow (network I/O) | ⚡ Fast (local I/O) |
-| **Reliability** | 🔄 Rate limits | ✅ 100% reliable |
-| **Customization** | 🔒 Limited | 🎯 Full control |
-| **Offline Usage** | ❌ Impossible | ✅ Complete |
+| **网络依赖** | ❌ 必需 | ✅ 无 |
+| **企业网络** | ❌ 经常被阻止 | ✅ 始终工作 |
+| **速度** | 🐌 慢（网络 I/O） | ⚡ 快（本地 I/O） |
+| **可靠性** | 🔄 速率限制 | ✅ 100% 可靠 |
+| **自定义** | 🔒 有限 | 🎯 完全控制 |
+| **离线使用** | ❌ 不可能 | ✅ 完整 |
 
-## Configuration
+## 配置
 
-### AI Assistant Support
+### AI 助手支持
 
 #### Claude Code
 ```bash
 rod init --ai claude
 ```
-- Generates `.claude-config.json`
-- Optimized for file operations
-- Built-in command integration
+- 生成 `.claude-config.json`
+- 优化文件操作
+- 内置命令集成
 
 #### GitHub Copilot
 ```bash
 rod init --ai copilot
 ```
-- Generates `COPILOT.md` guide
-- Workspace-aware commands
-- `@workspace` integration tips
+- 生成 `COPILOT.md` 指南
+- 工作区感知命令
+- `@workspace` 集成提示
 
 #### Gemini CLI
 ```bash
 rod init --ai gemini
 ```
-- Generates `.gemini-config.json`
-- Context-aware prompting
-- Structured workflow support
+- 生成 `.gemini-config.json`
+- 上下文感知提示
+- 结构化工作流支持
 
 #### Cursor IDE
 ```bash
 rod init --ai cursor
 ```
-- Generates `CURSOR.md` guide
-- Ctrl+K/Cmd+K integration
-- IDE-optimized workflow
+- 生成 `CURSOR.md` 指南
+- Ctrl+K/Cmd+K 集成
+- IDE 优化工作流
 
-### Cross-Platform Scripts
+#### Codebuddy
+```bash
+rod init --ai codebuddy
+```
+- 生成 `.codebuddy/commands/` 目录
+- 代码助手最佳实践
+- 结构化工作流支持
+
+### 跨平台脚本
 
 #### Bash (Unix/Linux/macOS)
 ```bash
 rod init --script sh
 ```
-- POSIX-compatible scripts
-- Automatic executable permissions
-- Unix-style path handling
+- POSIX 兼容脚本
+- 自动可执行权限
+- Unix 风格路径处理
 
-#### PowerShell (Windows/Cross-platform)
+#### PowerShell (Windows/跨平台)
 ```bash
 rod init --script ps
 ```
-- Modern PowerShell syntax
-- Cross-platform compatibility
-- Windows-optimized operations
+- 现代 PowerShell 语法
+- 跨平台兼容性
+- Windows 优化操作
 
-## Generated Project Structure
+## 生成的项目结构
 
 ```
 my-project/
-├── .claude-config.json           # AI-specific configuration
-├── commands/                     # AI assistant commands
-│   ├── specify.md               # Feature specification creation
-│   ├── plan.md                  # Implementation planning
-│   └── tasks.md                 # Task breakdown
-├── scripts/                     # Cross-platform automation
-│   └── bash/                    # or powershell/
-│       ├── common.sh            # Shared utilities
-│       ├── create-new-feature.sh
-│       ├── setup-plan.sh
-│       └── update-agent-context.sh
-├── templates/                   # Document templates
-│   ├── spec-template.md         # Feature specification template
-│   ├── plan-template.md         # Implementation plan template
-│   └── tasks-template.md        # Task list template
-└── memory/                      # Project constitution
-    ├── constitution.md          # Project principles
-    └── constitution_update_checklist.md
+├── .claude-config.json           # AI 特定配置
+├── .claude/commands/             # AI 助手命令（路线图工作流）
+│   ├── module.md                # 模块创建和导航
+│   ├── spec.md                  # 规范分析
+│   ├── design.md                # 技术设计
+│   ├── todo.md                  # 任务分解
+│   └── sync.md                  # 进度同步
+├── .specify/                    # 共享资源
+│   ├── scripts/                 # 跨平台自动化
+│   │   └── bash/                # 或 powershell/
+│   │       ├── create-module.sh
+│   │       ├── spec.sh
+│   │       ├── generate-design.sh
+│   │       ├── create-todos.sh
+│   │       └── sync-progress.sh
+│   ├── templates/               # 文档模板
+│   │   ├── spec-template.md     # 功能规范模板
+│   │   ├── design-template.md   # 设计文档模板
+│   │   ├── todo-template.md     # 任务列表模板
+│   │   └── roadmap-template.md  # 项目路线图模板
+│   └── memory/                  # 项目宪法
+│       ├── constitution.md      # 项目原则
+│       └── constitution_update_checklist.md
+└── specs/                       # 项目规范
+    ├── roadmap.md              # 项目路线图
+    └── modules/                # 功能模块
+        └── {模块名称}/           # 单个模块
+            ├── spec.md         # 模块规范
+            ├── design.md       # 模块设计
+            ├── todo.md         # 模块任务
+            └── modules/        # 子模块（递归）
 ```
 
-## Workflow
+## 路线图驱动工作流
 
-### 1. Specification Creation (`/specify`)
+ROD CLI 提供结构化的 5 阶段开发工作流，用于构建复杂功能：
+
+### 1. 模块创建 (`/module`)
 ```bash
-# Use with your AI assistant
-/specify "Add user authentication with JWT tokens"
+# 创建新的功能模块
+/module auth/login
 ```
-- Creates feature branches (e.g., `001-user-authentication`)
-- Generates structured specifications
-- Uses templates for consistency
+- 创建模块目录结构
+- 初始化规范模板
+- 支持分层模块组织
 
-### 2. Implementation Planning (`/plan`)
+### 2. 规范分析 (`/spec`)
 ```bash
-# Generate technical implementation plan
-/plan
+# 分析和记录需求
+/spec "实现基于 JWT 的认证"
 ```
-- Analyzes specifications
-- Creates step-by-step implementation plan
-- Identifies dependencies and risks
+- 创建详细的 EARS 格式需求
+- 包含业务规则和验收标准
+- 生成带有 Mermaid 图表的结构化规范
 
-### 3. Task Breakdown (`/tasks`)
+### 3. 技术设计 (`/design`)
 ```bash
-# Break plan into actionable tasks
-/tasks
+# 生成全面的设计文档
+/design
 ```
-- Converts plans into development tasks
-- Estimates effort and complexity
-- Provides implementation order
+- 创建架构和组件设计
+- 定义 API、数据模型和接口
+- 将需求映射到技术实现
 
-## Command Reference
+### 4. 任务规划 (`/todo`)
+```bash
+# 分解为可操作的开发任务
+/todo
+```
+- 将设计转换为开发任务
+- 创建测试驱动开发计划
+- 提供实施路线图
+
+### 5. 进度同步 (`/sync`)
+```bash
+# 同步进度到项目路线图
+/sync
+```
+- 更新模块完成状态
+- 同步进度到父模块和路线图
+- 跟踪依赖关系和里程碑
+
+## 命令参考
 
 ### `rod init`
 
-Initialize a new ROD project.
+初始化新的 ROD 项目。
 
 ```bash
 rod init [project-name] [options]
 ```
 
-#### Options
+#### 选项
 
-| Option | Description | Values |
+| 选项 | 描述 | 值 |
 |--------|-------------|---------|
-| `--ai <assistant>` | AI assistant to use | `claude`, `copilot`, `gemini`, `cursor` |
-| `--script <type>` | Script type | `sh` (bash), `ps` (powershell) |
-| `--here` | Initialize in current directory | boolean |
-| `--no-git` | Skip git repository initialization | boolean |
-| `--ignore-agent-tools` | Skip AI tool validation | boolean |
-| `--debug` | Show verbose diagnostic output | boolean |
+| `--ai <assistant>` | 要使用的 AI 助手 | `claude`, `copilot`, `gemini`, `cursor`, `codebuddy` |
+| `--script <type>` | 脚本类型 | `sh` (bash), `ps` (powershell) |
+| `--here` | 在当前目录初始化 | boolean |
+| `--no-git` | 跳过 git 仓库初始化 | boolean |
+| `--ignore-agent-tools` | 跳过 AI 工具验证 | boolean |
+| `--debug` | 显示详细诊断输出 | boolean |
 
-#### Examples
+#### 示例
 
 ```bash
-# Standard project with Claude
+# 使用 Claude 的标准项目
 rod init my-project --ai claude
 
-# Current directory with Copilot and PowerShell
+# 在当前目录使用 Copilot 和 PowerShell
 rod init --here --ai copilot --script ps
 
-# Skip git initialization
+# 跳过 git 初始化
 rod init my-app --ai gemini --no-git
 
-# Debug mode with detailed output
+# 调试模式和详细输出
 rod init test-project --debug
 ```
 
 ### `rod check`
 
-Validate system requirements and tool availability.
+验证系统要求和工具可用性。
 
 ```bash
 rod check [options]
 ```
 
-#### Options
+#### 选项
 
-| Option | Description |
+| 选项 | 描述 |
 |--------|-------------|
-| `--verbose`, `-v` | Show detailed information including paths |
+| `--verbose`, `-v` | 显示包括路径在内的详细信息 |
 
-#### Output
+#### 输出
 
 ```bash
-🔍 Checking system requirements...
+🔍 检查系统要求...
 
-System Information:
-  Platform: darwin (arm64)
-  Node.js: v20.19.0
-  npm: 10.8.2
-  Git: 2.39.5
+系统信息：
+  平台：darwin (arm64)
+  Node.js：v20.19.0
+  npm：10.8.2
+  Git：2.39.5
 
-Tool Availability:
-  ✅ Available:
+工具可用性：
+  ✅ 可用：
     node (20.19.0)
     npm (10.8.2)
     git (2.39.5)
     claude-cli (1.0.110)
 
-  ❌ Missing:
-    gh [AI-SPECIFIC] - brew install gh
+  ❌ 缺失：
+    gh [AI-特定] - brew install gh
 
-Overall Status:
-  ✅ All required tools are available
-     4/5 tools available
+总体状态：
+  ✅ 所有必需工具都可用
+     4/5 工具可用
 ```
 
-## Development
+## 开发
 
-### Prerequisites
+### 先决条件
 
 - Node.js 18+ 
 - npm 8+
 - TypeScript 5+
 
-### Setup
+### 设置
 
 ```bash
-# Clone repository
+# 克隆仓库
 git clone https://github.com/Rainmen-xia/rod-cli.git
 cd rod-cli
 
-# Install dependencies
+# 安装依赖
 npm install
 
-# Build project
+# 构建项目
 npm run build
 
-# Run tests
+# 运行测试
 npm test
 
-# Development mode
+# 开发模式
 npm run dev -- init test-project --ai claude --debug
 ```
 
-### Available Scripts
+### 可用脚本
 
-| Script | Description |
+| 脚本 | 描述 |
 |--------|-------------|
-| `npm run build` | Compile TypeScript to JavaScript |
-| `npm run dev` | Run CLI in development mode |
-| `npm test` | Run Jest test suite |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run test:coverage` | Generate test coverage report |
-| `npm run lint` | Run ESLint |
-| `npm run format` | Format code with Prettier |
+| `npm run build` | 将 TypeScript 编译为 JavaScript |
+| `npm run dev` | 在开发模式下运行 CLI |
+| `npm test` | 运行 Jest 测试套件 |
+| `npm run test:watch` | 在监视模式下运行测试 |
+| `npm run test:coverage` | 生成测试覆盖率报告 |
+| `npm run lint` | 运行 ESLint |
+| `npm run format` | 使用 Prettier 格式化代码 |
 
-### Testing
+### 测试
 
-The project follows **Test-Driven Development** principles:
+项目遵循**测试驱动开发**原则：
 
 ```bash
-# Run all tests
+# 运行所有测试
 npm test
 
-# Run with coverage
+# 运行覆盖率测试
 npm run test:coverage
 
-# Run specific test suite
+# 运行特定测试套件
 npm test -- --testNamePattern="InitCommand"
 
-# Watch mode for development
+# 开发监视模式
 npm run test:watch
 ```
 
-#### Test Structure
+#### 测试结构
 
 ```
 tests/
-├── contract/          # Contract tests (TDD)
-├── unit/             # Unit tests
-├── integration/      # Integration tests
-└── performance/      # Performance tests
+├── contract/          # 契约测试（TDD）
+├── unit/             # 单元测试
+├── integration/      # 集成测试
+└── performance/      # 性能测试
 ```
 
-## Migration from Python Version
+## 从 Python 版本迁移
 
-The Node.js version provides **complete feature parity** with the Python version:
+Node.js 版本提供与 Python 版本**完全功能对等**：
 
-### Key Improvements
+### 主要改进
 
-| Feature | Python Version | Node.js Version |
+| 特性 | Python 版本 | Node.js 版本 |
 |---------|---------------|-----------------|
-| **Installation** | `pip install` + Python setup | `npm install -g` (single command) |
-| **Dependencies** | Multiple Python packages | Minimal npm dependencies |
-| **Startup Time** | ~500ms (Python import) | ~100ms (Node.js) |
-| **Cross-platform** | Good | Excellent |
-| **Network Issues** | GitHub API dependent | Completely offline |
-| **Template Updates** | Requires release cycle | Immediate (built-in) |
+| **安装** | `pip install` + Python 设置 | `npm install -g`（单命令） |
+| **依赖** | 多个 Python 包 | 最小 npm 依赖 |
+| **启动时间** | ~500ms（Python 导入） | ~100ms（Node.js） |
+| **跨平台** | 好 | 优秀 |
+| **网络问题** | 依赖 GitHub API | 完全离线 |
+| **模板更新** | 需要发布周期 | 即时（内置） |
 
-### Migration Commands
+### 迁移命令
 
 ```bash
-# Python version
+# Python 版本
 specify init my-project --ai claude
 
-# Node.js ROD CLI (identical interface)
+# Node.js ROD CLI（相同接口）
 rod init my-project --ai claude
 ```
 
-### Configuration Compatibility
+### 配置兼容性
 
-Both versions generate identical project structures and are fully interchangeable.
+两个版本生成相同的项目结构，完全可互换。
 
-## Contributing
+## 贡献
 
-### Development Workflow
+### 开发工作流程
 
-1. **Fork** the repository
-2. **Clone** your fork
-3. **Create** a feature branch
-4. **Write** tests first (TDD)
-5. **Implement** the feature
-6. **Run** tests and linting
-7. **Submit** a pull request
+1. **Fork** 仓库
+2. **克隆** 您的 fork
+3. **创建** 功能分支
+4. **先写** 测试（TDD）
+5. **实现** 功能
+6. **运行** 测试和 linting
+7. **提交** pull request
 
-### Code Standards
+### 代码标准
 
-- **TypeScript**: Strict mode enabled
-- **Testing**: Jest with >90% coverage
-- **Linting**: ESLint with TypeScript rules
-- **Formatting**: Prettier with consistent style
-- **Commits**: Conventional commit messages
+- **TypeScript**：启用严格模式
+- **测试**：Jest，>90% 覆盖率
+- **Linting**：ESLint 与 TypeScript 规则
+- **格式化**：Prettier 一致风格
+- **提交**：约定式提交消息
 
-### Testing Guidelines
+### 测试指南
 
 ```typescript
-// Example: Contract test (TDD)
+// 示例：契约测试（TDD）
 describe('InitCommand', () => {
-  it('should initialize project with local templates', async () => {
-    // Arrange
+  it('应该使用本地模板初始化项目', async () => {
+    // 准备
     const initCommand = new InitCommand();
     const args = { projectName: 'test', ai: 'claude' };
     
-    // Act
+    // 执行
     await initCommand.execute(args);
     
-    // Assert
+    // 断言
     expect(fs.existsSync('test/templates')).toBe(true);
     expect(fs.existsSync('test/scripts')).toBe(true);
   });
 });
 ```
 
-## Troubleshooting
+## 故障排除
 
-### Common Issues
+### 常见问题
 
-#### 1. Permission Errors
+#### 1. 权限错误
 ```bash
-# On Unix systems, ensure script permissions
+# 在 Unix 系统上，确保脚本权限
 chmod +x scripts/bash/*.sh
 
-# Or use the built-in permission setter
-rod init --debug  # Shows permission operations
+# 或使用内置权限设置器
+rod init --debug  # 显示权限操作
 ```
 
-#### 2. Missing Tools
+#### 2. 缺失工具
 ```bash
-# Check what's missing
+# 检查缺失内容
 rod check --verbose
 
-# Install missing tools (example for macOS)
+# 安装缺失工具（macOS 示例）
 brew install git gh claude-cli
 ```
 
-#### 3. Project Name Conflicts
+#### 3. 项目名称冲突
 ```bash
-# Use current directory instead
+# 使用当前目录
 rod init --here --ai claude
 
-# Or specify different name
+# 或指定不同名称
 rod init my-unique-project-name --ai claude
 ```
 
-#### 4. Debug Mode
+#### 4. 调试模式
 ```bash
-# Enable verbose output for diagnosis
+# 启用详细输出进行诊断
 rod init test-project --debug --ai claude
 ```
 
-## Performance Benchmarks
+## 性能基准
 
-### Initialization Speed Comparison
+### 初始化速度比较
 
-| Method | Average Time | Network Required |
+| 方法 | 平均时间 | 需要网络 |
 |--------|-------------|------------------|
-| **Python + GitHub** | 3.2s | ✅ Yes |
-| **Node.js Local** | 0.8s | ❌ No |
+| **Python + GitHub** | 3.2秒 | ✅ 是 |
+| **Node.js 本地** | 0.8秒 | ❌ 否 |
 
-### Memory Usage
+### 内存使用
 
-| Version | Memory Peak | Startup Memory |
+| 版本 | 内存峰值 | 启动内存 |
 |---------|-------------|----------------|
 | **Python** | 45MB | 25MB |
 | **Node.js** | 28MB | 15MB |
 
-## License
+## 许可证
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT 许可证 - 详见 [LICENSE](LICENSE) 文件。
 
-## Support
+## 支持
 
-- **Issues**: [GitHub Issues](https://github.com/Rainmen-xia/rod-cli/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/Rainmen-xia/rod-cli/discussions)
-- **Documentation**: [ROD Docs](https://github.com/Rainmen-xia/rod-cli/wiki)
+- **问题**：[GitHub Issues](https://github.com/Rainmen-xia/rod-cli/issues)
+- **讨论**：[GitHub Discussions](https://github.com/Rainmen-xia/rod-cli/discussions)
+- **文档**：[Spec Kit Docs](https://github.com/Rainmen-xia/rod-cli/wiki)
 
-## Changelog
+## 更新日志
 
-### v1.0.0 (Latest)
+### v1.0.0（最新）
 
-#### 🎉 Major Features
-- **Local Template Generation**: Complete offline functionality
-- **Multi-AI Support**: Claude, Copilot, Gemini, Cursor
-- **Cross-Platform Scripts**: Bash and PowerShell support
-- **TypeScript Rewrite**: Full type safety and modern tooling
+#### 🎉 主要功能
+- **本地模板生成**：完全离线功能
+- **多 AI 支持**：Claude、Copilot、Gemini、Cursor、Codebuddy
+- **跨平台脚本**：Bash 和 PowerShell 支持
+- **TypeScript 重写**：完整类型安全和现代工具
 
-#### 🔧 Improvements
-- **Zero Network Dependencies**: Works in any network environment
-- **Faster Initialization**: 4x speed improvement over Python version
-- **Smaller Package Size**: Reduced dependency footprint
-- **Better Error Messages**: Clear, actionable error reporting
+#### 🔧 改进
+- **零网络依赖**：在任何网络环境中工作
+- **更快初始化**：比 Python 版本快 4 倍
+- **更小包大小**：减少依赖占用
+- **更好错误消息**：清晰、可操作的错误报告
 
-#### 🐛 Bug Fixes
-- Fixed `--here` option path resolution
-- Improved script permission handling on Windows
-- Enhanced cross-platform path handling
+#### 🐛 Bug 修复
+- 修复 `--here` 选项路径解析
+- 改进 Windows 脚本权限处理
+- 增强跨平台路径处理
 
-#### 🚀 Performance
-- **80% faster** project initialization
-- **40% less** memory usage
-- **100% reliable** in offline environments
+#### 🚀 性能
+- **80% 更快** 项目初始化
+- **40% 更少** 内存使用
+- **100% 可靠** 离线环境
+
+## 致谢
+
+本项目受到优秀的 [spec-kit](https://github.com/spec-kit.git) 项目启发和参考。我们向 GitHub 团队表示感谢，感谢他们在规范驱动开发工作流程方面的开创性工作，并提供了使 ROD CLI 成为可能的基础概念。
+
+### 来自 spec-kit 的关键启发：
+- 📋 **规范驱动工作流程模式**
+- 🤖 **多 AI 助手集成方法**
+- 📁 **项目结构和模板组织**
+- 🔧 **基于命令的开发方法**
+
+### ROD CLI 改进：
+- 🔄 **基于 NPM 的版本控制**：无 GitHub 下载，避免企业网络限制
+- 🏢 **企业网络友好**：完全离线工作，在受限环境中运行
+- ⚡ **本地模板生成**：内置模板消除网络依赖
+- 🎯 **TypeScript 实现**：完整类型安全和现代开发体验
+- 🌐 **增强跨平台支持**：更好的 Windows/Unix 兼容性
 
 ---
 
-**Built with ❤️ by the ROD Team**
+**用 ❤️ 由 ROD 团队构建**
 
-*Empowering rule-oriented and specification-driven development worldwide*
+*在全球范围内增强规则导向和规范驱动开发*

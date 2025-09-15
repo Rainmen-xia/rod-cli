@@ -19,12 +19,19 @@ export enum ScriptType {
   POWERSHELL = 'ps'
 }
 
+// Workflow Mode Enumeration
+export enum WorkflowMode {
+  LEGACY = 'legacy',    // Original branch-based workflow (001-feature-name)
+  ROADMAP = 'roadmap'   // New module-based workflow (roadmap driven)
+}
+
 // Main CLI Configuration Interface
 export interface CLIConfig {
   projectName: string;           // Project name
   aiAssistant: AIAssistant;      // Selected AI assistant
   scriptType: ScriptType;        // Script type
   projectPath: string;           // Project path (absolute)
+  workflowMode: WorkflowMode;    // Workflow mode (legacy or roadmap)
   skipGit: boolean;              // Skip git initialization
   skipTls: boolean;              // Skip TLS verification
   ignoreAgentTools: boolean;     // Ignore agent tool checks
@@ -41,6 +48,7 @@ export interface ConfigValidationResult {
 // Configuration builder for easier creation
 export class CLIConfigBuilder {
   private config: Partial<CLIConfig> = {
+    workflowMode: WorkflowMode.ROADMAP,  // Default to roadmap mode
     skipGit: false,
     skipTls: false,
     ignoreAgentTools: false,
@@ -87,6 +95,11 @@ export class CLIConfigBuilder {
     return this;
   }
 
+  setWorkflowMode(mode: WorkflowMode): CLIConfigBuilder {
+    this.config.workflowMode = mode;
+    return this;
+  }
+
   build(): CLIConfig {
     const validation = validateCLIConfig(this.config as CLIConfig);
     if (!validation.valid) {
@@ -118,6 +131,13 @@ export function validateCLIConfig(config: Partial<CLIConfig>): ConfigValidationR
   // Validate script type (optional - will be auto-detected if not provided)
   if (config.scriptType && !Object.values(ScriptType).includes(config.scriptType)) {
     errors.push(`Invalid script type: ${config.scriptType}`);
+  }
+
+  // Validate workflow mode
+  if (!config.workflowMode) {
+    warnings.push('Workflow mode not specified, defaulting to roadmap mode');
+  } else if (!Object.values(WorkflowMode).includes(config.workflowMode)) {
+    errors.push(`Invalid workflow mode: ${config.workflowMode}`);
   }
 
   // Validate project path
@@ -163,9 +183,14 @@ export function getSupportedScriptTypes(): ScriptType[] {
   return Object.values(ScriptType);
 }
 
+export function getSupportedWorkflowModes(): WorkflowMode[] {
+  return Object.values(WorkflowMode);
+}
+
 // Default configuration factory
 export function createDefaultConfig(): Partial<CLIConfig> {
   return {
+    workflowMode: WorkflowMode.ROADMAP,
     skipGit: false,
     skipTls: false,
     ignoreAgentTools: false,
@@ -181,6 +206,7 @@ export class ConfigUtils {
       aiAssistant: args.ai as AIAssistant,
       scriptType: args.script as ScriptType,
       projectPath: args.projectPath,
+      workflowMode: args.workflow as WorkflowMode || WorkflowMode.ROADMAP,
       skipGit: Boolean(args.noGit),
       skipTls: Boolean(args.skipTls),
       ignoreAgentTools: Boolean(args.ignoreAgentTools),
@@ -193,13 +219,11 @@ export class ConfigUtils {
       `Project: ${config.projectName}`,
       `AI Assistant: ${config.aiAssistant}`,
       `Script Type: ${config.scriptType}`,
+      `Workflow Mode: ${config.workflowMode}`,
       `Path: ${config.projectPath}`,
       `Skip Git: ${config.skipGit}`,
       `Debug: ${config.debug}`
     ].join('\n');
   }
 
-  static getTemplateFileName(config: CLIConfig, version: string): string {
-    return `spec-kit-template-${config.aiAssistant}-${config.scriptType}-${version}.zip`;
-  }
 }

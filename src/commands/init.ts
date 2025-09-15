@@ -7,7 +7,7 @@
 import chalk from 'chalk';
 import path from 'path';
 import { InitCommandArgs } from '../contracts/cli-interface';
-import { CLIConfig, AIAssistant, ScriptType } from '../types/cli-config';
+import { CLIConfig, AIAssistant, ScriptType, WorkflowMode } from '../types/cli-config';
 import { ConfigManager } from '../lib/config-manager';
 import { LocalTemplateGenerator, TemplateGenerationConfig } from '../lib/local-template-generator';
 import { ToolChecker } from '../lib/tool-checker';
@@ -49,6 +49,7 @@ export class InitCommand {
       const templateConfig: TemplateGenerationConfig = {
         aiAssistant: config.aiAssistant,
         scriptType: config.scriptType,
+        workflowMode: config.workflowMode,
         projectPath: config.projectPath,
         projectName: config.projectName
       };
@@ -114,6 +115,7 @@ export class InitCommand {
       projectName,
       ai: args.ai,
       script: args.script,
+      workflow: args.workflow,
       projectPath: this.resolveProjectPath(projectName, args.here),
       noGit: args.noGit,
       skipTls: args.skipTls,
@@ -235,6 +237,11 @@ export async function validateInitArgs(args: InitCommandArgs): Promise<string[]>
     errors.push(`Invalid script type: ${args.script}. Valid options: ${Object.values(ScriptType).join(', ')}`);
   }
 
+  // Validate workflow mode
+  if (args.workflow && !Object.values(WorkflowMode).includes(args.workflow as WorkflowMode)) {
+    errors.push(`Invalid workflow mode: ${args.workflow}. Valid options: ${Object.values(WorkflowMode).join(', ')}`);
+  }
+
   // Validate project name (if not using current directory)
   if (!args.here && (!args.projectName || args.projectName.trim().length === 0)) {
     errors.push('Project name is required when not using --here flag');
@@ -253,12 +260,13 @@ export function getInitCommandHelp(): string {
 Initialize a new Spec Kit project
 
 Usage:
-  spec-kit init [project-name] [options]
-  spec-kit init --here [options]
+  rod init [project-name] [options]
+  rod init --here [options]
 
 Options:
   --ai <assistant>          AI assistant to use (claude, copilot, gemini, cursor, codebuddy)
   --script <type>           Script type (sh, ps)
+  --workflow <mode>         Workflow mode (legacy, roadmap) [default: roadmap]
   --here                    Initialize in current directory
   --no-git                  Skip git repository initialization
   --skip-tls                Skip SSL/TLS verification (not recommended)
@@ -266,8 +274,8 @@ Options:
   --debug                   Show verbose output
 
 Examples:
-  spec-kit init my-project --ai claude
-  spec-kit init --here --ai copilot --script ps
-  spec-kit init my-app --ai gemini --no-git
+  rod init my-project --ai claude
+  rod init --here --ai copilot --script ps --workflow legacy
+  rod init my-app --ai gemini --workflow roadmap
 `;
 }

@@ -7,11 +7,12 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
-import { AIAssistant, ScriptType } from '../types/cli-config';
+import { AIAssistant, ScriptType, WorkflowMode } from '../types/cli-config';
 
 export interface TemplateGenerationConfig {
   aiAssistant: AIAssistant;
   scriptType: ScriptType;
+  workflowMode: WorkflowMode;
   projectPath: string;
   projectName: string;
 }
@@ -52,8 +53,13 @@ export class LocalTemplateGenerator {
       // 2. Generate AI-specific command files (in AI-specific directory)
       await this.generateAICommands(config, filesCreated);
 
-      // 5. Generate AI-specific configuration files
+      // 3. Generate AI-specific configuration files
       await this.generateAIConfig(config, filesCreated);
+
+      // 4. Generate workflow-specific content based on mode
+      if (config.workflowMode === WorkflowMode.ROADMAP) {
+        await this.generateRoadmapWorkflow(config, filesCreated);
+      }
 
       // Calculate total size
       for (const filePath of filesCreated) {
@@ -134,10 +140,14 @@ export class LocalTemplateGenerator {
     await fs.mkdir(templatesDir, { recursive: true });
 
     const baseTemplates = [
-      'spec-template.md',
+      'legacy-spec-template.md',
       'plan-template.md', 
       'tasks-template.md',
-      'agent-file-template.md'
+      'agent-file-template.md',
+      'roadmap-template.md',
+      'spec-template.md',
+      'design-template.md',
+      'todo-template.md'
     ];
 
     for (const template of baseTemplates) {
@@ -163,7 +173,10 @@ export class LocalTemplateGenerator {
     const commandsDir = path.join(config.projectPath, aiDir, commandsSubdir);
     await fs.mkdir(commandsDir, { recursive: true });
 
-    const commands = ['specify', 'plan', 'tasks'];
+    // Choose commands based on workflow mode
+    const commands = config.workflowMode === WorkflowMode.ROADMAP 
+      ? ['module', 'spec', 'design', 'todo', 'sync']
+      : ['specify', 'plan', 'tasks'];
     
     for (const command of commands) {
       const commandContent = await this.generateCommandFile(command, config);
@@ -197,20 +210,7 @@ export class LocalTemplateGenerator {
     try {
       let content = await fs.readFile(templatePath, 'utf8');
       
-      // Replace script references with the appropriate script type
-      const scriptExtension = config.scriptType === ScriptType.BASH ? 'sh' : 'ps1';
-      const scriptPath = `.specify/scripts/${config.scriptType === ScriptType.BASH ? 'bash' : 'powershell'}`;
-      
-      // Update script references in the template
-      content = content.replace(
-        /scripts\/bash\/([^.]+)\.sh/g, 
-        `${scriptPath}/$1.${scriptExtension}`
-      );
-      
-      content = content.replace(
-        /scripts\/powershell\/([^.]+)\.ps1/g,
-        `${scriptPath}/$1.${scriptExtension}`
-      );
+      // Templates already have correct .specify/ paths, no script reference updates needed
 
       // Replace all placeholders
       content = this.replacePlaceholders(content, config);
@@ -246,8 +246,7 @@ export class LocalTemplateGenerator {
 
     let scriptPath = scriptPathMatch[1].trim();
     
-    // Convert script path to .specify format
-    scriptPath = scriptPath.replace(/^scripts\//, '.specify/scripts/');
+    // Script path is already in .specify format from template, no conversion needed
     
     // Replace {SCRIPT} placeholder with the actual script path
     return content.replace(/\{SCRIPT\}/g, scriptPath);
@@ -337,10 +336,8 @@ export class LocalTemplateGenerator {
    * Rewrite paths to use .specify format
    */
   private rewritePaths(content: string): string {
-    return content
-      .replace(/(?<!\.specify\/)memory\//g, '.specify/memory/')
-      .replace(/(?<!\.specify\/)scripts\//g, '.specify/scripts/')
-      .replace(/(?<!\.specify\/)templates\//g, '.specify/templates/');
+    // Since templates already use .specify/ prefix, no additional rewriting needed
+    return content;
   }
 
   /**
@@ -538,6 +535,48 @@ export class LocalTemplateGenerator {
     const configPath = path.join(config.projectPath, '.gemini-config.json');
     await fs.writeFile(configPath, JSON.stringify(geminiConfig, null, 2), 'utf8');
     filesCreated.push(configPath);
+  }
+
+  /**
+   * Generate roadmap workflow structure
+   */
+  private async generateRoadmapWorkflow(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
+    const specsDir = path.join(config.projectPath, 'specs');
+    await fs.mkdir(specsDir, { recursive: true });
+
+    // Create initial roadmap from template
+    const roadmapSourcePath = path.join(this.templateBasePath, 'roadmap-template.md');
+    const roadmapDestPath = path.join(specsDir, 'roadmap.md');
+    
+    try {
+      let roadmapContent = await fs.readFile(roadmapSourcePath, 'utf8');
+      
+      // Replace project name placeholder
+      roadmapContent = roadmapContent.replace(/\[项目名称\]/g, config.projectName);
+      roadmapContent = roadmapContent.replace(/\[Project Name\]/g, config.projectName);
+      
+      // Add creation timestamp
+      const now = new Date().toISOString().split('T')[0];
+      roadmapContent = roadmapContent.replace(/\[创建时间\]/g, now);
+      roadmapContent = roadmapContent.replace(/\[Creation Date\]/g, now);
+      
+      await fs.writeFile(roadmapDestPath, roadmapContent, 'utf8');
+      filesCreated.push(roadmapDestPath);
+    } catch (error) {
+      throw new Error(`Failed to generate roadmap: ${(error as Error).message}`);
+    }
+
+    // Create modules directory structure
+    const modulesDir = path.join(specsDir, 'modules');
+    await fs.mkdir(modulesDir, { recursive: true });
+    filesCreated.push(modulesDir);
+    
+    // Create README for modules directory
+    const modulesReadmeContent = `# 模块目录\n\n此目录包含项目的各个模块规范。每个模块应包含以下文件：\n\n- \`spec.md\` - 规格说明\n- \`design.md\` - 设计文档\n- \`todo.md\` - 任务清单\n\n## 模块结构\n\n模块可以是递归的，即模块内可以包含子模块，通过 \`modules/\` 子目录实现。\n\n## 使用说明\n\n1. 使用 \`/module <模块名>\` 创建新模块\n2. 使用 \`/spec\` 分析规格\n3. 使用 \`/design\` 生成设计文档\n4. 使用 \`/todo\` 创建任务清单\n5. 使用 \`/sync\` 同步进度到roadmap\n`;
+    
+    const modulesReadmePath = path.join(modulesDir, 'README.md');
+    await fs.writeFile(modulesReadmePath, modulesReadmeContent, 'utf8');
+    filesCreated.push(modulesReadmePath);
   }
 
 }

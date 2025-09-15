@@ -12,6 +12,7 @@ import {
   CLIConfig,
   AIAssistant,
   ScriptType,
+  WorkflowMode,
   CLIConfigBuilder,
   validateCLIConfig,
   ConfigValidationResult,
@@ -41,6 +42,7 @@ export interface ConfigProfile {
 export interface GlobalConfig {
   defaultAI?: AIAssistant;
   defaultScript?: ScriptType;
+  defaultWorkflow?: WorkflowMode;
   skipGitByDefault: boolean;
   debugMode: boolean;
   profiles: ConfigProfile[];
@@ -64,7 +66,7 @@ export class ConfigManager {
   private globalConfig: GlobalConfig | null = null;
 
   constructor(configDir?: string) {
-    this.configDir = configDir || path.join(os.homedir(), '.spec-kit');
+    this.configDir = configDir || path.join(os.homedir(), '.rod');
     this.globalConfigPath = path.join(this.configDir, 'config.json');
   }
 
@@ -84,6 +86,7 @@ export class ConfigManager {
     if (defaults.aiAssistant) builder.setAIAssistant(defaults.aiAssistant);
     if (defaults.scriptType) builder.setScriptType(defaults.scriptType);
     else builder.setScriptType(this.autoDetectScriptType()); // Auto-detect if not set
+    if (defaults.workflowMode) builder.setWorkflowMode(defaults.workflowMode);
     builder.setSkipGit(defaults.skipGit || false);
     builder.setDebug(defaults.debug || false);
     builder.setSkipTls(false);
@@ -103,6 +106,15 @@ export class ConfigManager {
     } else {
       // Always auto-detect if no script type provided
       builder.setScriptType(this.autoDetectScriptType());
+    }
+    
+    if (partialConfig.workflowMode) {
+      builder.setWorkflowMode(partialConfig.workflowMode);
+      
+      // In roadmap mode, always auto-detect script type for simplicity
+      if (partialConfig.workflowMode === WorkflowMode.ROADMAP && !partialConfig.scriptType) {
+        builder.setScriptType(this.autoDetectScriptType());
+      }
     }
     
     if (partialConfig.projectPath) {
@@ -394,6 +406,7 @@ export class ConfigManager {
     return {
       aiAssistant: this.globalConfig.defaultAI,
       scriptType: this.globalConfig.defaultScript,
+      workflowMode: this.globalConfig.defaultWorkflow,
       skipGit: this.globalConfig.skipGitByDefault,
       debug: this.globalConfig.debugMode,
       skipTls: false,
@@ -417,13 +430,13 @@ export class FileConfigPersistence implements ConfigPersistence {
   constructor(private baseDir: string = process.cwd()) {}
 
   async save(config: CLIConfig, location?: string): Promise<void> {
-    const configPath = location || path.join(this.baseDir, '.spec-kit-config.json');
+    const configPath = location || path.join(this.baseDir, '.rod-config.json');
     const configData = JSON.stringify(config, null, 2);
     await fs.writeFile(configPath, configData, 'utf8');
   }
 
   async load(location?: string): Promise<CLIConfig | null> {
-    const configPath = location || path.join(this.baseDir, '.spec-kit-config.json');
+    const configPath = location || path.join(this.baseDir, '.rod-config.json');
     
     try {
       const configData = await fs.readFile(configPath, 'utf8');
@@ -434,12 +447,12 @@ export class FileConfigPersistence implements ConfigPersistence {
   }
 
   async exists(location?: string): Promise<boolean> {
-    const configPath = location || path.join(this.baseDir, '.spec-kit-config.json');
+    const configPath = location || path.join(this.baseDir, '.rod-config.json');
     return fs.access(configPath).then(() => true).catch(() => false);
   }
 
   async remove(location?: string): Promise<void> {
-    const configPath = location || path.join(this.baseDir, '.spec-kit-config.json');
+    const configPath = location || path.join(this.baseDir, '.rod-config.json');
     try {
       await fs.unlink(configPath);
     } catch {
