@@ -212,11 +212,11 @@ export class LocalTemplateGenerator {
         `${scriptPath}/$1.${scriptExtension}`
       );
 
-      // Parse frontmatter to extract script paths and replace {SCRIPT} placeholder
-      content = this.replaceScriptPlaceholder(content, config.scriptType);
+      // Replace all placeholders
+      content = this.replacePlaceholders(content, config);
 
-      // Add AI-specific metadata
-      content = this.addAIMetadata(content, config.aiAssistant);
+      // Convert to AI-specific format
+      content = this.convertToAIFormat(content, config.aiAssistant);
       
       return content;
       
@@ -226,7 +226,7 @@ export class LocalTemplateGenerator {
   }
 
   /**
-   * Replace {SCRIPT} placeholder with appropriate script path from frontmatter
+   * Replace placeholders with appropriate values based on configuration
    */
   private replaceScriptPlaceholder(content: string, scriptType: ScriptType): string {
     // Parse frontmatter to extract script paths
@@ -251,6 +251,133 @@ export class LocalTemplateGenerator {
     
     // Replace {SCRIPT} placeholder with the actual script path
     return content.replace(/\{SCRIPT\}/g, scriptPath);
+  }
+
+  /**
+   * Replace all placeholders in content
+   */
+  private replacePlaceholders(content: string, config: TemplateGenerationConfig): string {
+    let result = content;
+    
+    // Replace {SCRIPT} with appropriate script path
+    result = this.replaceScriptPlaceholder(result, config.scriptType);
+    
+    // Replace {ARGS} with appropriate argument format based on AI assistant
+    const argsFormat = this.getArgumentFormat(config.aiAssistant);
+    result = result.replace(/\{ARGS\}/g, argsFormat);
+    
+    // Replace __AGENT__ with the actual agent name
+    result = result.replace(/__AGENT__/g, config.aiAssistant);
+    
+    // Apply path rewrites (convert relative paths to .specify paths)
+    result = this.rewritePaths(result);
+    
+    // Clean up frontmatter (remove scripts section)
+    result = this.cleanFrontmatter(result);
+    
+    return result;
+  }
+
+  /**
+   * Remove scripts section from frontmatter to clean up the generated command files
+   */
+  private cleanFrontmatter(content: string): string {
+    const lines = content.split('\n');
+    const result: string[] = [];
+    let inFrontmatter = false;
+    let inScriptsSection = false;
+    let dashCount = 0;
+
+    for (const line of lines) {
+      if (line === '---') {
+        dashCount++;
+        if (dashCount === 1) {
+          inFrontmatter = true;
+        } else if (dashCount === 2) {
+          inFrontmatter = false;
+        }
+        result.push(line);
+        continue;
+      }
+
+      if (inFrontmatter) {
+        if (line === 'scripts:') {
+          inScriptsSection = true;
+          continue; // Skip the scripts: line
+        } else if (line.match(/^[a-zA-Z].*:/) && inScriptsSection) {
+          // New top-level section, stop skipping
+          inScriptsSection = false;
+        }
+
+        if (inScriptsSection && line.match(/^\s/)) {
+          // Skip indented lines under scripts section
+          continue;
+        }
+      }
+
+      result.push(line);
+    }
+
+    return result.join('\n');
+  }
+
+  /**
+   * Get argument format for different AI assistants
+   */
+  private getArgumentFormat(aiAssistant: AIAssistant): string {
+    switch (aiAssistant) {
+      case AIAssistant.GEMINI:
+        return '{{args}}';
+      default:
+        return '$ARGUMENTS';
+    }
+  }
+
+  /**
+   * Rewrite paths to use .specify format
+   */
+  private rewritePaths(content: string): string {
+    return content
+      .replace(/(?<!\.specify\/)memory\//g, '.specify/memory/')
+      .replace(/(?<!\.specify\/)scripts\//g, '.specify/scripts/')
+      .replace(/(?<!\.specify\/)templates\//g, '.specify/templates/');
+  }
+
+  /**
+   * Convert content to AI-specific format
+   */
+  private convertToAIFormat(content: string, aiAssistant: AIAssistant): string {
+    switch (aiAssistant) {
+      case AIAssistant.GEMINI:
+        return this.convertToTomlFormat(content, aiAssistant);
+      default:
+        // For claude, cursor, codebuddy, copilot - add AI-specific metadata
+        return this.addAIMetadata(content, aiAssistant);
+    }
+  }
+
+  /**
+   * Convert markdown content to TOML format for Gemini
+   */
+  private convertToTomlFormat(content: string, aiAssistant: AIAssistant): string {
+    // Extract description from frontmatter
+    const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+    let description = '';
+    
+    if (frontmatterMatch) {
+      const frontmatter = frontmatterMatch[1];
+      const descMatch = frontmatter.match(/description:\s*(.+)/);
+      if (descMatch) {
+        description = descMatch[1].trim();
+      }
+    }
+
+    // Extract body (everything after frontmatter)
+    const bodyMatch = content.match(/^---\n[\s\S]*?\n---\n\n([\s\S]*)$/);
+    const body = bodyMatch ? bodyMatch[1] : content;
+
+    // Format as TOML
+    return `description = "${description}"\n\nprompt = """\n${body}\n"""`;
   }
 
   /**
