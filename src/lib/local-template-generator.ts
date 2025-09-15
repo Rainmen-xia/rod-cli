@@ -212,6 +212,9 @@ export class LocalTemplateGenerator {
         `${scriptPath}/$1.${scriptExtension}`
       );
 
+      // Parse frontmatter to extract script paths and replace {SCRIPT} placeholder
+      content = this.replaceScriptPlaceholder(content, config.scriptType);
+
       // Add AI-specific metadata
       content = this.addAIMetadata(content, config.aiAssistant);
       
@@ -220,6 +223,34 @@ export class LocalTemplateGenerator {
     } catch (error) {
       throw new Error(`Failed to generate ${command} command: ${(error as Error).message}`);
     }
+  }
+
+  /**
+   * Replace {SCRIPT} placeholder with appropriate script path from frontmatter
+   */
+  private replaceScriptPlaceholder(content: string, scriptType: ScriptType): string {
+    // Parse frontmatter to extract script paths
+    const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+    if (!frontmatterMatch) {
+      return content;
+    }
+
+    const frontmatter = frontmatterMatch[1];
+    const scriptKey = scriptType === ScriptType.BASH ? 'sh' : 'ps';
+    
+    // Extract script path for the current script type
+    const scriptPathMatch = frontmatter.match(new RegExp(`${scriptKey}:\\s*(.+)`));
+    if (!scriptPathMatch) {
+      return content;
+    }
+
+    let scriptPath = scriptPathMatch[1].trim();
+    
+    // Convert script path to .specify format
+    scriptPath = scriptPath.replace(/^scripts\//, '.specify/scripts/');
+    
+    // Replace {SCRIPT} placeholder with the actual script path
+    return content.replace(/\{SCRIPT\}/g, scriptPath);
   }
 
   /**
