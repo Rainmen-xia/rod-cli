@@ -27,7 +27,7 @@ export interface CLIArgs {
 // Init Command Contract
 export interface InitCommandArgs extends CLIArgs {
   projectName?: string;
-  ai?: 'claude' | 'copilot' | 'gemini' | 'cursor';
+  ai?: 'claude' | 'copilot' | 'gemini' | 'cursor' | 'codebuddy';
   script?: 'sh' | 'ps';
   here?: boolean;
   noGit?: boolean;
@@ -57,7 +57,7 @@ export const CLI_COMMANDS: CLICommand[] = [
         name: 'ai',
         description: 'AI assistant to use',
         type: 'string',
-        choices: ['claude', 'copilot', 'gemini', 'cursor']
+        choices: ['claude', 'copilot', 'gemini', 'cursor', 'codebuddy']
       },
       {
         name: 'script',

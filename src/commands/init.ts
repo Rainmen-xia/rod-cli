@@ -11,7 +11,6 @@ import { CLIConfig, AIAssistant, ScriptType } from '../types/cli-config';
 import { ConfigManager } from '../lib/config-manager';
 import { LocalTemplateGenerator, TemplateGenerationConfig } from '../lib/local-template-generator';
 import { ToolChecker } from '../lib/tool-checker';
-import { ResultFormatter } from '../types/results';
 
 export class InitCommand {
   private configManager: ConfigManager;
@@ -258,7 +257,7 @@ Usage:
   spec-kit init --here [options]
 
 Options:
-  --ai <assistant>          AI assistant to use (claude, copilot, gemini, cursor)
+  --ai <assistant>          AI assistant to use (claude, copilot, gemini, cursor, codebuddy)
   --script <type>           Script type (sh, ps)
   --here                    Initialize in current directory
   --no-git                  Skip git repository initialization

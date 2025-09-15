@@ -7,7 +7,6 @@
 import chalk from 'chalk';
 import { CheckCommandArgs } from '../contracts/cli-interface';
 import { ToolChecker } from '../lib/tool-checker';
-import { SystemCheckUtils } from '../types/system';
 import { AIAssistant } from '../types/cli-config';
 
 export class CheckCommand {

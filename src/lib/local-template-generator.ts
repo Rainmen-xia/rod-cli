@@ -103,6 +103,8 @@ export class LocalTemplateGenerator {
         return '.gemini';
       case AIAssistant.COPILOT:
         return '.github'; // Copilot uses .github/prompts
+      case AIAssistant.CODEBUDDY:
+        return '.codebuddy';
       default:
         return '.specify';
     }
@@ -175,7 +177,7 @@ export class LocalTemplateGenerator {
         case AIAssistant.COPILOT:
           filename = `${command}.prompt.md`;
           break;
-        default: // CLAUDE, CURSOR
+        default: // CLAUDE, CURSOR, CODEBUDDY
           filename = `${command}.md`;
           break;
       }
@@ -288,6 +290,9 @@ export class LocalTemplateGenerator {
       case AIAssistant.CURSOR:
         // Cursor doesn't generate additional config files
         break;
+      case AIAssistant.CODEBUDDY:
+        // Codebuddy doesn't generate additional config files
+        break;
     }
   }
 
@@ -332,6 +337,10 @@ export class LocalTemplateGenerator {
       case AIAssistant.CURSOR:
         return `<!-- Instructions for Cursor -->
 <!-- This command is optimized for Cursor IDE. Use Ctrl+K or Cmd+K for code generation. -->`;
+        
+      case AIAssistant.CODEBUDDY:
+        return `<!-- Instructions for Codebuddy -->
+<!-- This command is designed for use with Codebuddy. Follow codebuddy's best practices for code assistance. -->`;
         
       default:
         return '';

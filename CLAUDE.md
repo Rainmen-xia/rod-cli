@@ -68,6 +68,7 @@ src/
 - **GitHub Copilot**：创建 `.github/prompts/` 目录（包含 .prompt.md 格式文件）
 - **Gemini**：生成 `.gemini-config.json` 配置文件 + `.gemini/commands/` 目录（包含 .toml 格式命令）
 - **Cursor**：创建 `.cursor/commands/` 目录（包含 .md 格式命令，无额外配置文件）
+- **Codebuddy**：创建 `.codebuddy/commands/` 目录（包含 .md 格式命令，无额外配置文件）
 
 **所有AI助手共享**：`.specify/` 目录包含通用内容（templates、scripts、memory）
 

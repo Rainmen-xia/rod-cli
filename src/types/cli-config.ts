@@ -9,7 +9,8 @@ export enum AIAssistant {
   CLAUDE = 'claude',
   COPILOT = 'copilot',
   GEMINI = 'gemini',
-  CURSOR = 'cursor'
+  CURSOR = 'cursor',
+  CODEBUDDY = 'codebuddy'
 }
 
 // Script Type Enumeration
