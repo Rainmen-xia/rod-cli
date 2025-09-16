@@ -55,9 +55,6 @@ program
   .description('Initialize a new ROD project with rule-oriented development structure')
   .argument('[project-name]', 'Name for your new project directory')
   .option('--ai <assistant>', 'AI assistant to use', validateAIAssistant)
-  .option('--script <type>', 'Script type to use (auto-detected if not specified)', validateScriptType)
-  .option('--workflow <mode>', 'Workflow mode to use (roadmap, legacy)', validateWorkflowMode, WorkflowMode.ROADMAP)
-  .option('--here', 'Initialize project in current directory', false)
   .option('--no-git', 'Skip git repository initialization', false)
   .option('--skip-tls', 'Skip SSL/TLS verification', false)
   .option('--ignore-agent-tools', 'Skip checks for AI agent tools', false)
@@ -68,9 +65,9 @@ program
       const args = {
         projectName,
         ai: options.ai as AIAssistant,
-        script: options.script as ScriptType,
-        workflow: options.workflow as WorkflowMode,
-        here: options.here,
+        script: undefined, // Always auto-detect
+        workflow: undefined, // Always use roadmap
+        here: !projectName, // If no project name, use current directory
         noGit: !options.git, // Commander negates no-git to git
         skipTls: options.skipTls,
         ignoreAgentTools: options.ignoreAgentTools,
@@ -138,9 +135,9 @@ program
 // Add custom help for commands
 program.commands.forEach(cmd => {
   if (cmd.name() === 'init') {
-    cmd.addHelpText('after', getInitCommandHelp());
+    cmd.addHelpText('afterAll', getInitCommandHelp());
   } else if (cmd.name() === 'check') {
-    cmd.addHelpText('after', getCheckCommandHelp());
+    cmd.addHelpText('afterAll', getCheckCommandHelp());
   }
 });
 
@@ -158,7 +155,7 @@ Examples:
   ${chalk.cyan('rod init my-project --ai claude')}
   
   ${chalk.gray('# Initialize in current directory')}
-  ${chalk.cyan('rod init --here --ai copilot --script ps')}
+  ${chalk.cyan('rod init --ai copilot')}
   
   ${chalk.gray('# Check system requirements')}
   ${chalk.cyan('rod check --verbose')}

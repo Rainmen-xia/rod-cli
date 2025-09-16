@@ -242,40 +242,34 @@ export async function validateInitArgs(args: InitCommandArgs): Promise<string[]>
     errors.push(`Invalid workflow mode: ${args.workflow}. Valid options: ${Object.values(WorkflowMode).join(', ')}`);
   }
 
-  // Validate project name (if not using current directory)
-  if (!args.here && (!args.projectName || args.projectName.trim().length === 0)) {
-    errors.push('Project name is required when not using --here flag');
-  }
-
-  // Check for conflicting flags
-  if (args.here && args.projectName) {
-    errors.push('Cannot specify project name when using --here flag');
-  }
+  // No validation needed for project name - if not provided, uses current directory
 
   return errors;
 }
 
 export function getInitCommandHelp(): string {
   return `
-Initialize a new Spec Kit project
+Initialize a new ROD project with 5-stage roadmap workflow
 
 Usage:
   rod init [project-name] [options]
-  rod init --here [options]
+  rod init [options]                    # Initialize in current directory
 
 Options:
   --ai <assistant>          AI assistant to use (claude, copilot, gemini, cursor, codebuddy)
-  --script <type>           Script type (sh, ps)
-  --workflow <mode>         Workflow mode (legacy, roadmap) [default: roadmap]
-  --here                    Initialize in current directory
   --no-git                  Skip git repository initialization
   --skip-tls                Skip SSL/TLS verification (not recommended)
   --ignore-agent-tools      Skip AI agent tool checks
   --debug                   Show verbose output
 
+Notes:
+  • If no project name is provided, initializes in the current directory
+  • Script type (bash/powershell) is automatically detected based on your platform
+  • Always uses the roadmap workflow (module → spec → design → todo → sync)
+
 Examples:
-  rod init my-project --ai claude
-  rod init --here --ai copilot --script ps --workflow legacy
-  rod init my-app --ai gemini --workflow roadmap
+  rod init my-project --ai claude       # Create new directory 'my-project'
+  rod init --ai copilot                 # Initialize in current directory
+  rod init my-app --ai gemini --debug   # Create with debug output
 `;
 }
