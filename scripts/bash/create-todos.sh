@@ -99,6 +99,18 @@ REQ_COUNT=$(grep -c "### REQ-" "$REQUIREMENTS_FILE" 2>/dev/null || echo "0")
 DESIGN_COMPONENTS=$(grep -c "#### 组件\|#### Component" "$DESIGN_FILE" 2>/dev/null || echo "0")
 DESIGN_INTERFACES=$(grep -c "interface\|Interface" "$DESIGN_FILE" 2>/dev/null || echo "0")
 
+# Check for constitution.md and constitution compliance in design
+CONSTITUTION_FILE="$REPO_ROOT/.specify/memory/constitution.md"
+CONSTITUTION_EXISTS=false
+CONSTITUTION_COMPLIANT=false
+if [ -f "$CONSTITUTION_FILE" ]; then
+    CONSTITUTION_EXISTS=true
+    # Check if design document contains constitution compliance section
+    if grep -q "Constitution合规检查\|Constitution.*合规\|合规性声明" "$DESIGN_FILE"; then
+        CONSTITUTION_COMPLIANT=true
+    fi
+fi
+
 # Check for similar modules for reference
 SIMILAR_MODULES=()
 if [ -d "$REPO_ROOT/specs/modules" ]; then
@@ -115,8 +127,8 @@ if [ -d "$REPO_ROOT/specs/modules" ]; then
 fi
 
 if $JSON_MODE; then
-    printf '{"status":"ready","module_path":"%s","module_dir":"%s","requirements_file":"%s","design_file":"%s","todo_file":"%s","todo_exists":%s,"requirements_count":%d,"design_components":%d,"design_interfaces":%d,"similar_modules":[' \
-        "$MODULE_PATH" "$MODULE_DIR" "$REQUIREMENTS_FILE" "$DESIGN_FILE" "$TODO_FILE" "$TODO_EXISTS" "$REQ_COUNT" "$DESIGN_COMPONENTS" "$DESIGN_INTERFACES"
+    printf '{"status":"ready","module_path":"%s","module_dir":"%s","requirements_file":"%s","design_file":"%s","todo_file":"%s","todo_exists":%s,"requirements_count":%d,"design_components":%d,"design_interfaces":%d,"constitution_file":"%s","constitution_exists":%s,"constitution_compliant":%s,"similar_modules":[' \
+        "$MODULE_PATH" "$MODULE_DIR" "$REQUIREMENTS_FILE" "$DESIGN_FILE" "$TODO_FILE" "$TODO_EXISTS" "$REQ_COUNT" "$DESIGN_COMPONENTS" "$DESIGN_INTERFACES" "$CONSTITUTION_FILE" "$CONSTITUTION_EXISTS" "$CONSTITUTION_COMPLIANT"
     
     if [ ${#SIMILAR_MODULES[@]} -gt 0 ]; then
         printf '"%s"' "${SIMILAR_MODULES[0]}"
@@ -135,5 +147,8 @@ else
     echo "REQUIREMENTS_COUNT: $REQ_COUNT"
     echo "DESIGN_COMPONENTS: $DESIGN_COMPONENTS"
     echo "DESIGN_INTERFACES: $DESIGN_INTERFACES"
+    echo "CONSTITUTION_FILE: $CONSTITUTION_FILE"
+    echo "CONSTITUTION_EXISTS: $CONSTITUTION_EXISTS"
+    echo "CONSTITUTION_COMPLIANT: $CONSTITUTION_COMPLIANT"
     [ ${#SIMILAR_MODULES[@]} -gt 0 ] && echo "SIMILAR_MODULES: ${SIMILAR_MODULES[*]}"
 fi

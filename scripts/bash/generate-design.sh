@@ -85,6 +85,13 @@ fi
 # Extract requirements information
 REQ_COUNT=$(grep -c "### REQ-" "$REQUIREMENTS_FILE" 2>/dev/null || echo "0")
 
+# Check for constitution.md
+CONSTITUTION_FILE="$REPO_ROOT/.specify/memory/constitution.md"
+CONSTITUTION_EXISTS=false
+if [ -f "$CONSTITUTION_FILE" ]; then
+    CONSTITUTION_EXISTS=true
+fi
+
 # Check for similar modules (basic pattern matching)
 SIMILAR_MODULES=()
 if [ -d "$REPO_ROOT/specs/modules" ]; then
@@ -101,8 +108,8 @@ if [ -d "$REPO_ROOT/specs/modules" ]; then
 fi
 
 if $JSON_MODE; then
-    printf '{"status":"ready","module_path":"%s","module_dir":"%s","requirements_file":"%s","design_file":"%s","design_exists":%s,"requirements_count":%d,"similar_modules":[' \
-        "$MODULE_PATH" "$MODULE_DIR" "$REQUIREMENTS_FILE" "$DESIGN_FILE" "$DESIGN_EXISTS" "$REQ_COUNT"
+    printf '{"status":"ready","module_path":"%s","module_dir":"%s","requirements_file":"%s","design_file":"%s","design_exists":%s,"requirements_count":%d,"constitution_file":"%s","constitution_exists":%s,"similar_modules":[' \
+        "$MODULE_PATH" "$MODULE_DIR" "$REQUIREMENTS_FILE" "$DESIGN_FILE" "$DESIGN_EXISTS" "$REQ_COUNT" "$CONSTITUTION_FILE" "$CONSTITUTION_EXISTS"
     
     if [ ${#SIMILAR_MODULES[@]} -gt 0 ]; then
         printf '"%s"' "${SIMILAR_MODULES[0]}"
@@ -118,5 +125,7 @@ else
     echo "DESIGN_FILE: $DESIGN_FILE"
     echo "DESIGN_EXISTS: $DESIGN_EXISTS"
     echo "REQUIREMENTS_COUNT: $REQ_COUNT"
+    echo "CONSTITUTION_FILE: $CONSTITUTION_FILE"
+    echo "CONSTITUTION_EXISTS: $CONSTITUTION_EXISTS"
     [ ${#SIMILAR_MODULES[@]} -gt 0 ] && echo "SIMILAR_MODULES: ${SIMILAR_MODULES[*]}"
 fi
