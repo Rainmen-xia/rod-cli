@@ -1,123 +1,116 @@
-# 需求文档: [模块名称]
+# Feature Specification: [FEATURE NAME]
 
-**模块路径**: `specs/modules/[模块路径]`  
-**创建时间**: [创建时间]  
-**最后更新**: [最后更新时间]  
-**状态**: 草稿/审核中/已批准  
+**Feature Branch**: `[###-feature-name]`  
+**Created**: [DATE]  
+**Status**: Draft  
+**Input**: User description: "$ARGUMENTS"
 
-## 第1部分：背景说明
-
-### 业务背景
-[说明该模块的业务背景、目标用户和解决的核心问题]
-
-### 核心目标
-[明确该模块要达成的业务目标]
-
-### 设计参考
-[如存在 page.png 设计稿，在此说明参考的设计要点]
-
-## 第2部分：需求概览与业务流程
-
-### 业务流程图
-```mermaid
-flowchart TD
-    A[用户进入] --> B{判断条件}
-    B -->|条件1| C[执行操作1]
-    B -->|条件2| D[执行操作2]
-    C --> E[完成流程]
-    D --> E
+## Execution Flow (main)
+```
+1. Parse user description from Input
+   → If empty: ERROR "No feature description provided"
+2. Extract key concepts from description
+   → Identify: actors, actions, data, constraints
+3. For each unclear aspect:
+   → Mark with [NEEDS CLARIFICATION: specific question]
+4. Fill User Scenarios & Testing section
+   → If no clear user flow: ERROR "Cannot determine user scenarios"
+5. Generate Functional Requirements
+   → Each requirement must be testable
+   → Mark ambiguous requirements
+6. Identify Key Entities (if data involved)
+7. Run Review Checklist
+   → If any [NEEDS CLARIFICATION]: WARN "Spec has uncertainties"
+   → If implementation details found: ERROR "Remove tech details"
+8. Return: SUCCESS (spec ready for planning)
 ```
 
-### 状态机（如需要）
-```mermaid
-stateDiagram-v2
-    [*] --> 初始状态
-    初始状态 --> 状态A: 触发条件1
-    状态A --> 状态B: 触发条件2
-    状态B --> [*]: 完成
-```
+---
 
-### 关键业务规则
-- 规则1：[具体规则描述]
-- 规则2：[具体规则描述]
+## ⚡ Quick Guidelines
+- ✅ Focus on WHAT users need and WHY
+- ❌ Avoid HOW to implement (no tech stack, APIs, code structure)
+- 👥 Written for business stakeholders, not developers
 
-## 第3部分：EARS格式关键需求条目
+### Section Requirements
+- **Mandatory sections**: Must be completed for every feature
+- **Optional sections**: Include only when relevant to the feature
+- When a section doesn't apply, remove it entirely (don't leave as "N/A")
 
-### REQ-001: [需求标题]
-**WHEN** [触发条件]  
-**THE SYSTEM SHALL** [系统响应]  
-**WHERE** [约束条件]  
-**AND** [附加条件]  
-
-**验收标准**:
-- [ ] 验收点1：[具体可测试的标准]
-- [ ] 验收点2：[具体可测试的标准]
-- [ ] 验收点3：[具体可测试的标准]
-
-**标签**: #[业务分类] #[优先级] #[模块标识]
+### For AI Generation
+When creating this spec from a user prompt:
+1. **Mark all ambiguities**: Use [NEEDS CLARIFICATION: specific question] for any assumption you'd need to make
+2. **Don't guess**: If the prompt doesn't specify something (e.g., "login system" without auth method), mark it
+3. **Think like a tester**: Every vague requirement should fail the "testable and unambiguous" checklist item
+4. **Common underspecified areas**:
+   - User types and permissions
+   - Data retention/deletion policies  
+   - Performance targets and scale
+   - Error handling behaviors
+   - Integration requirements
+   - Security/compliance needs
 
 ---
 
-### REQ-002: [需求标题]
-**WHEN** [触发条件]  
-**THE SYSTEM SHALL** [系统响应]  
-**WHERE** [约束条件]  
-**AND** [附加条件]  
+## User Scenarios & Testing *(mandatory)*
 
-**验收标准**:
-```gherkin
-场景: [场景描述]
-Given [前置条件]
-When [执行操作]
-Then [预期结果]
-And [附加验证]
-```
+### Primary User Story
+[Describe the main user journey in plain language]
 
-**标签**: #[业务分类] #[优先级] #[模块标识]
+### Acceptance Scenarios
+1. **Given** [initial state], **When** [action], **Then** [expected outcome]
+2. **Given** [initial state], **When** [action], **Then** [expected outcome]
 
----
+### Edge Cases
+- What happens when [boundary condition]?
+- How does system handle [error scenario]?
 
-### REQ-003: [需求标题]
-**WHEN** [触发条件]  
-**THE SYSTEM SHALL** [系统响应]  
+## Requirements *(mandatory)*
 
-**验收标准**:
-| 输入条件 | 系统行为 | 预期结果 |
-|---------|----------|----------|
-| [条件1] | [行为1] | [结果1] |
-| [条件2] | [行为2] | [结果2] |
+### Functional Requirements
+- **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
+- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
+- **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
+- **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
+- **FR-005**: System MUST [behavior, e.g., "log all security events"]
 
-**标签**: #[业务分类] #[优先级] #[模块标识]
+*Example of marking unclear requirements:*
+- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
+- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
-## 需求审核清单
-
-### 完整性检查
-- [ ] 所有需求都有明确的触发条件（WHEN）
-- [ ] 所有需求都有明确的系统响应（THE SYSTEM SHALL）
-- [ ] 每个需求都有可测试的验收标准
-- [ ] 业务流程图覆盖了所有关键路径
-
-### 业务正确性检查  
-- [ ] 需求符合业务目标
-- [ ] 避免了技术实现细节
-- [ ] 用户角色和权限定义清晰
-- [ ] 异常情况处理规则明确
-
-### 可追溯性检查
-- [ ] 需求ID命名规范（REQ-XXX）
-- [ ] 需求标签完整
-- [ ] 与业务流程图节点对应
-- [ ] 验收标准可直接转换为测试用例
+### Key Entities *(include if feature involves data)*
+- **[Entity 1]**: [What it represents, key attributes without implementation]
+- **[Entity 2]**: [What it represents, relationships to other entities]
 
 ---
 
-## 需求变更记录
+## Review & Acceptance Checklist
+*GATE: Automated checks run during main() execution*
 
-### [日期] - v1.1
-**变更内容**: [变更描述]  
-**影响范围**: [影响的需求ID]  
-**变更原因**: [变更原因]  
+### Content Quality
+- [ ] No implementation details (languages, frameworks, APIs)
+- [ ] Focused on user value and business needs
+- [ ] Written for non-technical stakeholders
+- [ ] All mandatory sections completed
+
+### Requirement Completeness
+- [ ] No [NEEDS CLARIFICATION] markers remain
+- [ ] Requirements are testable and unambiguous  
+- [ ] Success criteria are measurable
+- [ ] Scope is clearly bounded
+- [ ] Dependencies and assumptions identified
 
 ---
 
-*文档状态：需要审核 | 审核人：[审核人] | 批准日期：[日期]*
+## Execution Status
+*Updated by main() during processing*
+
+- [ ] User description parsed
+- [ ] Key concepts extracted
+- [ ] Ambiguities marked
+- [ ] User scenarios defined
+- [ ] Requirements generated
+- [ ] Entities identified
+- [ ] Review checklist passed
+
+---
