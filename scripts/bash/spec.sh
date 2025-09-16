@@ -21,25 +21,31 @@ fi
 REPO_ROOT=$(git rev-parse --show-toplevel)
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-# Try to detect current module from working directory or git branch
+# Only detect module from current working directory
+# Branch names are independent of module structure
 MODULE_PATH=""
 CURRENT_DIR=$(pwd)
 
 # Check if we're in a specs/modules directory
 if [[ "$CURRENT_DIR" == *"/specs/modules/"* ]]; then
     MODULE_PATH=$(echo "$CURRENT_DIR" | sed 's|.*/specs/modules/||' | sed 's|/.*||')
-elif [[ "$CURRENT_BRANCH" == *"/"* ]]; then
-    # Try to extract module from branch name like feature/auth or module/api
-    MODULE_PATH=$(echo "$CURRENT_BRANCH" | cut -d'/' -f2-)
 fi
 
 # If still no module path, ask for explicit module specification
 if [ -z "$MODULE_PATH" ]; then
     if $JSON_MODE; then
-        printf '{"status":"error","message":"Cannot determine module path. Please specify module with /module command first or work from module directory"}\n'
+        printf '{"status":"error","message":"Cannot determine module path. Please specify module with /module command first or work from a module directory"}\n'
     else
-        echo "ERROR: Cannot determine module path"
-        echo "Please run '/module <module_name>' first or work from a module directory"
+        echo "ERROR: Cannot determine module path from current context"
+        echo "Current branch: $CURRENT_BRANCH"
+        echo "Current directory: $CURRENT_DIR"
+        echo ""
+        echo "Solutions:"
+        echo "1. Run '/module <module_name>' first to create/enter a module"
+        echo "2. Work from a module directory (specs/modules/your-module/)"
+        echo ""
+        echo "Note: Branch names are independent of module structure."
+        echo "Use any branch naming convention you prefer."
     fi
     exit 1
 fi
