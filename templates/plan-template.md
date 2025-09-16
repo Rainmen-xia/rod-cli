@@ -1,99 +1,99 @@
-# Implementation Plan: [FEATURE]
+# 实现计划: [功能]
 
-<!-- VARIANT:sh - Run `/scripts/bash/update-agent-context.sh __AGENT__` for your AI assistant -->
-<!-- VARIANT:ps - Run `/scripts/powershell/update-agent-context.ps1 -AgentType __AGENT__` for your AI assistant -->
+<!-- VARIANT:sh - 为你的AI助手运行 `/scripts/bash/update-agent-context.sh __AGENT__` -->
+<!-- VARIANT:ps - 为你的AI助手运行 `/scripts/powershell/update-agent-context.ps1 -AgentType __AGENT__` -->
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**分支**: `[###-功能名称]` | **日期**: [日期] | **规范**: [链接]
+**输入**: 来自 `/specs/[###-功能名称]/spec.md` 的功能规范
 
-## Execution Flow (/plan command scope)
+## 执行流程 (/plan命令范围)
 ```
-1. Load feature spec from Input path
-   → If not found: ERROR "No feature spec at {path}"
-2. Fill Technical Context (scan for NEEDS CLARIFICATION)
-   → Detect Project Type from context (web=frontend+backend, mobile=app+api)
-   → Set Structure Decision based on project type
-3. Evaluate Constitution Check section below
-   → If violations exist: Document in Complexity Tracking
-   → If no justification possible: ERROR "Simplify approach first"
-   → Update Progress Tracking: Initial Constitution Check
-4. Execute Phase 0 → research.md
-   → If NEEDS CLARIFICATION remain: ERROR "Resolve unknowns"
-5. Execute Phase 1 → contracts, data-model.md, quickstart.md, agent-specific template file (e.g., `CLAUDE.md` for Claude Code, `.github/copilot-instructions.md` for GitHub Copilot, or `GEMINI.md` for Gemini CLI).
-6. Re-evaluate Constitution Check section
-   → If new violations: Refactor design, return to Phase 1
-   → Update Progress Tracking: Post-Design Constitution Check
-7. Plan Phase 2 → Describe task generation approach (DO NOT create tasks.md)
-8. STOP - Ready for /tasks command
-```
-
-**IMPORTANT**: The /plan command STOPS at step 7. Phases 2-4 are executed by other commands:
-- Phase 2: /tasks command creates tasks.md
-- Phase 3-4: Implementation execution (manual or via tools)
-
-## Summary
-[Extract from feature spec: primary requirement + technical approach from research]
-
-## Technical Context
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
-
-## Constitution Check
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
-
-**Simplicity**:
-- Projects: [#] (max 3 - e.g., api, cli, tests)
-- Using framework directly? (no wrapper classes)
-- Single data model? (no DTOs unless serialization differs)
-- Avoiding patterns? (no Repository/UoW without proven need)
-
-**Architecture**:
-- EVERY feature as library? (no direct app code)
-- Libraries listed: [name + purpose for each]
-- CLI per library: [commands with --help/--version/--format]
-- Library docs: llms.txt format planned?
-
-**Testing (NON-NEGOTIABLE)**:
-- RED-GREEN-Refactor cycle enforced? (test MUST fail first)
-- Git commits show tests before implementation?
-- Order: Contract→Integration→E2E→Unit strictly followed?
-- Real dependencies used? (actual DBs, not mocks)
-- Integration tests for: new libraries, contract changes, shared schemas?
-- FORBIDDEN: Implementation before test, skipping RED phase
-
-**Observability**:
-- Structured logging included?
-- Frontend logs → backend? (unified stream)
-- Error context sufficient?
-
-**Versioning**:
-- Version number assigned? (MAJOR.MINOR.BUILD)
-- BUILD increments on every change?
-- Breaking changes handled? (parallel tests, migration plan)
-
-## Project Structure
-
-### Documentation (this feature)
-```
-specs/[###-feature]/
-├── plan.md              # This file (/plan command output)
-├── research.md          # Phase 0 output (/plan command)
-├── data-model.md        # Phase 1 output (/plan command)
-├── quickstart.md        # Phase 1 output (/plan command)
-├── contracts/           # Phase 1 output (/plan command)
-└── tasks.md             # Phase 2 output (/tasks command - NOT created by /plan)
+1. 从输入路径加载功能规范
+   → 如果未找到: ERROR "在{路径}处没有找到功能规范"
+2. 填写技术上下文(扫描需要澄清的内容)
+   → 从上下文检测项目类型(web=前端+后端, mobile=应用+API)
+   → 基于项目类型设置结构决策
+3. 评估下面的宪法检查部分
+   → 如果存在违规: 在复杂性跟踪中记录
+   → 如果无法证明必要性: ERROR "请先简化方法"
+   → 更新进度跟踪: 初始宪法检查
+4. 执行阶段0 → research.md
+   → 如果仍有需要澄清的内容: ERROR "解决未知问题"
+5. 执行阶段1 → contracts, data-model.md, quickstart.md, 特定代理模板文件(例如Claude Code的`CLAUDE.md`、GitHub Copilot的`.github/copilot-instructions.md`或Gemini CLI的`GEMINI.md`)
+6. 重新评估宪法检查部分
+   → 如果出现新违规: 重构设计，返回阶段1
+   → 更新进度跟踪: 设计后宪法检查
+7. 规划阶段2 → 描述任务生成方法(不要创建tasks.md)
+8. 停止 - 准备好执行/tasks命令
 ```
 
-### Source Code (repository root)
+**重要**: /plan命令在步骤7停止。阶段2-4由其他命令执行:
+- 阶段2: /tasks命令创建tasks.md
+- 阶段3-4: 实现执行(手动或通过工具)
+
+## 摘要
+[从功能规范中提取: 主要需求 + 来自研究的技术方法]
+
+## 技术上下文
+**语言/版本**: [例如, Python 3.11, Swift 5.9, Rust 1.75 或 需要澄清]  
+**主要依赖**: [例如, FastAPI, UIKit, LLVM 或 需要澄清]  
+**存储**: [如果适用, 例如, PostgreSQL, CoreData, 文件 或 不适用]  
+**测试**: [例如, pytest, XCTest, cargo test 或 需要澄清]  
+**目标平台**: [例如, Linux服务器, iOS 15+, WASM 或 需要澄清]
+**项目类型**: [单一/网页/移动 - 决定源码结构]  
+**性能目标**: [特定领域, 例如, 1000请求/秒, 10k行/秒, 60fps 或 需要澄清]  
+**约束条件**: [特定领域, 例如, <200ms p95, <100MB内存, 离线可用 或 需要澄清]  
+**规模/范围**: [特定领域, 例如, 1万用户, 100万行代码, 50个页面 或 需要澄清]
+
+## 宪法检查
+*门禁: 必须在阶段0研究前通过。在阶段1设计后重新检查。*
+
+**简洁性**:
+- 项目数: [#] (最多3个 - 例如, api, cli, tests)
+- 直接使用框架? (没有包装类)
+- 单一数据模型? (除非序列化不同，否则没有DTO)
+- 避免模式? (没有经过验证需要的Repository/UoW)
+
+**架构**:
+- 每个功能都作为库? (没有直接的应用代码)
+- 库清单: [每个的名称 + 目的]
+- 每个库的CLI: [带有--help/--version/--format的命令]
+- 库文档: 计划使用llms.txt格式?
+
+**测试 (不可协商)**:
+- 强制执行红-绿-重构循环? (测试必须先失败)
+- Git提交显示测试在实现之前?
+- 严格遵循顺序: 契约→集成→端到端→单元?
+- 使用真实依赖? (实际数据库，不是模拟)
+- 集成测试用于: 新库、契约变更、共享模式?
+- 禁止: 测试前实现、跳过红色阶段
+
+**可观察性**:
+- 包含结构化日志?
+- 前端日志 → 后端? (统一流)
+- 错误上下文充分?
+
+**版本控制**:
+- 分配版本号? (主版本.次版本.构建)
+- 每次变更都增加构建号?
+- 处理破坏性变更? (并行测试、迁移计划)
+
+## 项目结构
+
+### 文档 (此功能)
 ```
-# Option 1: Single project (DEFAULT)
+specs/[###-功能]/
+├── plan.md              # 此文件 (/plan命令输出)
+├── research.md          # 阶段0输出 (/plan命令)
+├── data-model.md        # 阶段1输出 (/plan命令)
+├── quickstart.md        # 阶段1输出 (/plan命令)
+├── contracts/           # 阶段1输出 (/plan命令)
+└── tasks.md             # 阶段2输出 (/tasks命令 - 不是由/plan创建)
+```
+
+### 源代码 (仓库根目录)
+```
+# 选项1: 单项目 (默认)
 src/
 ├── models/
 ├── services/
@@ -105,7 +105,7 @@ tests/
 ├── integration/
 └── unit/
 
-# Option 2: Web application (when "frontend" + "backend" detected)
+# 选项2: Web应用 (当检测到"前端" + "后端"时)
 backend/
 ├── src/
 │   ├── models/
@@ -120,17 +120,17 @@ frontend/
 │   └── services/
 └── tests/
 
-# Option 3: Mobile + API (when "iOS/Android" detected)
+# 选项3: 移动应用 + API (当检测到"iOS/Android"时)
 api/
-└── [same as backend above]
+└── [与上面后端相同]
 
 ios/ or android/
-└── [platform-specific structure]
+└── [平台特定结构]
 ```
 
-**Structure Decision**: [DEFAULT to Option 1 unless Technical Context indicates web/mobile app]
+**结构决策**: [默认选项1，除非技术上下文表明是web/移动应用]
 
-## Phase 0: Outline & Research
+## 阶段0: 大纲和研究
 1. **Extract unknowns from Technical Context** above:
    - For each NEEDS CLARIFICATION → research task
    - For each dependency → best practices task
@@ -151,7 +151,7 @@ ios/ or android/
 
 **Output**: research.md with all NEEDS CLARIFICATION resolved
 
-## Phase 1: Design & Contracts
+## 阶段1: 设计和契约
 *Prerequisites: research.md complete*
 
 1. **Extract entities from feature spec** → `data-model.md`:
@@ -183,7 +183,7 @@ ios/ or android/
 
 **Output**: data-model.md, /contracts/*, failing tests, quickstart.md, agent-specific file
 
-## Phase 2: Task Planning Approach
+## 阶段2: 任务规划方法
 *This section describes what the /tasks command will do - DO NOT execute during /plan*
 
 **Task Generation Strategy**:
@@ -203,14 +203,14 @@ ios/ or android/
 
 **IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
 
-## Phase 3+: Future Implementation
+## 阶段3+: 未来实现
 *These phases are beyond the scope of the /plan command*
 
 **Phase 3**: Task execution (/tasks command creates tasks.md)  
 **Phase 4**: Implementation (execute tasks.md following constitutional principles)  
 **Phase 5**: Validation (run tests, execute quickstart.md, performance validation)
 
-## Complexity Tracking
+## 复杂性跟踪
 *Fill ONLY if Constitution Check has violations that must be justified*
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
@@ -219,7 +219,7 @@ ios/ or android/
 | [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
 
 
-## Progress Tracking
+## 进度跟踪
 *This checklist is updated during execution flow*
 
 **Phase Status**:
