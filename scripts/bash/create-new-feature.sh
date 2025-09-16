@@ -19,40 +19,25 @@ if [ -z "$FEATURE_DESCRIPTION" ]; then
 fi
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-SPECS_DIR="$REPO_ROOT/specs"
-mkdir -p "$SPECS_DIR"
 
-HIGHEST=0
-if [ -d "$SPECS_DIR" ]; then
-    for dir in "$SPECS_DIR"/*; do
-        [ -d "$dir" ] || continue
-        dirname=$(basename "$dir")
-        number=$(echo "$dirname" | grep -o '^[0-9]\+' || echo "0")
-        number=$((10#$number))
-        if [ "$number" -gt "$HIGHEST" ]; then HIGHEST=$number; fi
-    done
-fi
-
-NEXT=$((HIGHEST + 1))
-FEATURE_NUM=$(printf "%03d" "$NEXT")
-
+# Create branch name in feature/description_date format
+CURRENT_DATE=$(date +%Y%m%d)
 BRANCH_NAME=$(echo "$FEATURE_DESCRIPTION" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//' | sed 's/-$//')
 WORDS=$(echo "$BRANCH_NAME" | tr '-' '\n' | grep -v '^$' | head -3 | tr '\n' '-' | sed 's/-$//')
-BRANCH_NAME="${FEATURE_NUM}-${WORDS}"
+BRANCH_NAME="feature/${WORDS}_${CURRENT_DATE}"
 
+# Create the branch
 git checkout -b "$BRANCH_NAME"
 
-FEATURE_DIR="$SPECS_DIR/$BRANCH_NAME"
-mkdir -p "$FEATURE_DIR"
-
-TEMPLATE="$REPO_ROOT/templates/spec-template.md"
-SPEC_FILE="$FEATURE_DIR/spec.md"
-if [ -f "$TEMPLATE" ]; then cp "$TEMPLATE" "$SPEC_FILE"; else touch "$SPEC_FILE"; fi
+# Note: Directory structure is independent of branch name
+# User should use /module command to create module directories
+echo "Branch '$BRANCH_NAME' created successfully."
+echo "Use '/module <module_name>' command to create module directories independently of branch name."
 
 if $JSON_MODE; then
-    printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s"}\n' "$BRANCH_NAME" "$SPEC_FILE" "$FEATURE_NUM"
+    printf '{"BRANCH_NAME":"%s","MESSAGE":"Branch created successfully. Use /module command to create module directories."}\n' "$BRANCH_NAME"
 else
     echo "BRANCH_NAME: $BRANCH_NAME"
-    echo "SPEC_FILE: $SPEC_FILE"
-    echo "FEATURE_NUM: $FEATURE_NUM"
+    echo "STATUS: Branch created successfully"
+    echo "NOTE: Use '/module <module_name>' to create module directories"
 fi
