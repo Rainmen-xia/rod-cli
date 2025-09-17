@@ -140,14 +140,10 @@ export class LocalTemplateGenerator {
     await fs.mkdir(templatesDir, { recursive: true });
 
     const baseTemplates = [
-      'legacy-spec-template.md',
-      'plan-template.md', 
-      'tasks-template.md',
-      'agent-file-template.md',
       'roadmap-template.md',
       'spec-template.md',
-      'design-template.md',
-      'todo-template.md'
+      'plan-template.md',
+      'tasks-template.md'
     ];
 
     for (const template of baseTemplates) {
@@ -174,8 +170,8 @@ export class LocalTemplateGenerator {
     await fs.mkdir(commandsDir, { recursive: true });
 
     // Choose commands based on workflow mode
-    const commands = config.workflowMode === WorkflowMode.ROADMAP 
-      ? ['module', 'spec', 'design', 'todo', 'sync']
+    const commands = config.workflowMode === WorkflowMode.ROADMAP
+      ? ['module', 'specify', 'plan', 'tasks', 'progress']
       : ['specify', 'plan', 'tasks'];
     
     for (const command of commands) {
@@ -412,7 +408,7 @@ export class LocalTemplateGenerator {
    * Copy memory/constitution files
    */
   private async copyMemoryFiles(memoryDestDir: string, filesCreated: string[]): Promise<void> {
-    const memorySourceDir = path.join(__dirname, '../../memory');
+    const memorySourceDir = path.join(this.templateBasePath, 'memory');
     
     await fs.mkdir(memoryDestDir, { recursive: true });
     
