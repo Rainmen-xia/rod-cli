@@ -72,7 +72,7 @@ function Get-ModuleStatus {
     }
     
     # Check design
-    $designFile = Join-Path $moduleDirectoryParam "design.md"
+    $designFile = Join-Path $moduleDirectoryParam "plan.md"
     if ((Test-Path $designFile) -and (Get-Item $designFile).Length -gt 0) {
         $designContent = Get-Content $designFile -Raw -Encoding UTF8
         if ($designContent -notmatch '\[模块名称\]|\[模块路径\]') {
@@ -82,7 +82,7 @@ function Get-ModuleStatus {
     }
     
     # Check todo
-    $todoFile = Join-Path $moduleDirectoryParam "todo.md"
+    $todoFile = Join-Path $moduleDirectoryParam "tasks.md"
     if ((Test-Path $todoFile) -and (Get-Item $todoFile).Length -gt 0) {
         $todoContent = Get-Content $todoFile -Raw -Encoding UTF8
         if ($todoContent -notmatch '\[模块名称\]|\[模块路径\]') {
@@ -152,7 +152,7 @@ $parentPath = ""
 if ($modulePath -like "*/modules/*") {
     $parentPath = $modulePath -replace '/modules/[^/]*$', ''
     $parentDir = Join-Path $repoRoot "specs" "modules" $parentPath
-    $parentTodo = Join-Path $parentDir "todo.md"
+    $parentTodo = Join-Path $parentDir "tasks.md"
     
     # Update parent todo if exists
     if (Test-Path $parentTodo) {

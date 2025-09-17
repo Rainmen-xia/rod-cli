@@ -9,7 +9,7 @@ if (-not (Test-FeatureBranch -Branch $paths.CURRENT_BRANCH)) { exit 1 }
 
 if (-not (Test-Path $paths.FEATURE_DIR -PathType Container)) {
     Write-Output "ERROR: Feature directory not found: $($paths.FEATURE_DIR)"
-    Write-Output "Run /specify first to create the feature structure."
+    Write-Output "Run /specifyify first to create the feature structure."
     exit 1
 }
 if (-not (Test-Path $paths.IMPL_PLAN -PathType Leaf)) {

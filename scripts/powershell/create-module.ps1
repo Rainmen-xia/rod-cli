@@ -76,20 +76,20 @@ if (Test-Path $reqTemplate) {
     $filesCreated += $reqFile
 }
 
-# Create design.md from template
+# Create plan.md from template
 if (Test-Path $designTemplate) {
     $content = Get-Content $designTemplate -Raw -Encoding UTF8
     $content = Replace-Placeholders $content $moduleName $ModulePath $creationTime
-    $designFile = Join-Path $moduleDir "design.md"
+    $designFile = Join-Path $moduleDir "plan.md"
     $content | Out-File -FilePath $designFile -Encoding UTF8 -NoNewline
     $filesCreated += $designFile
 }
 
-# Create todo.md from template  
+# Create tasks.md from template  
 if (Test-Path $todoTemplate) {
     $content = Get-Content $todoTemplate -Raw -Encoding UTF8
     $content = Replace-Placeholders $content $moduleName $ModulePath $creationTime
-    $todoFile = Join-Path $moduleDir "todo.md"
+    $todoFile = Join-Path $moduleDir "tasks.md"
     $content | Out-File -FilePath $todoFile -Encoding UTF8 -NoNewline
     $filesCreated += $todoFile
 }

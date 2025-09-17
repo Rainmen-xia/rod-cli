@@ -184,24 +184,24 @@ rod init --script ps
 ```
 my-project/
 ├── .claude-config.json           # AI 特定配置
-├── .claude/commands/             # AI 助手命令（路线图工作流）
+├── .claude/commands/             # AI 助手命令（五步工作流）
 │   ├── module.md                # 模块创建和导航
-│   ├── spec.md                  # 规范分析
-│   ├── design.md                # 技术设计
-│   ├── todo.md                  # 任务分解
-│   └── sync.md                  # 进度同步
+│   ├── specify.md               # 需求规范分析
+│   ├── plan.md                  # 技术设计和规划
+│   ├── tasks.md                 # 任务分解和生成
+│   └── progress.md              # 进度同步管理
 ├── .specify/                    # 共享资源
 │   ├── scripts/                 # 跨平台自动化
 │   │   └── bash/                # 或 powershell/
-│   │       ├── create-module.sh
-│   │       ├── spec.sh
-│   │       ├── generate-design.sh
-│   │       ├── create-todos.sh
+│   │       ├── analyze-modules.sh
+│   │       ├── create-module-spec.sh
+│   │       ├── setup-module-plan.sh
+│   │       ├── generate-module-tasks.sh
 │   │       └── sync-progress.sh
 │   ├── templates/               # 文档模板
 │   │   ├── spec-template.md     # 功能规范模板
-│   │   ├── design-template.md   # 设计文档模板
-│   │   ├── todo-template.md     # 任务列表模板
+│   │   ├── plan-template.md     # 技术设计模板
+│   │   ├── tasks-template.md    # 任务列表模板
 │   │   └── roadmap-template.md  # 项目路线图模板
 │   └── memory/                  # 项目宪法
 │       ├── constitution.md      # 项目原则
@@ -209,16 +209,21 @@ my-project/
 └── specs/                       # 项目规范
     ├── roadmap.md              # 项目路线图
     └── modules/                # 功能模块
-        └── {模块名称}/           # 单个模块
-            ├── spec.md         # 模块规范
-            ├── design.md       # 模块设计
-            ├── todo.md         # 模块任务
-            └── modules/        # 子模块（递归）
+        └── [模块路径]/          # 模块目录
+            └── [功能名称]/      # 具体功能
+                ├── spec.md           # 功能规范
+                ├── plan.md           # 技术设计
+                ├── research.md       # 技术调研
+                ├── data-model.md     # 数据模型
+                ├── contracts/        # API契约
+                ├── quickstart.md     # 测试场景
+                ├── module-interfaces.md  # 模块接口(如有依赖)
+                └── tasks.md          # 开发任务
 ```
 
 ## 路线图驱动工作流
 
-ROD CLI 提供结构化的 5 阶段开发工作流，用于构建复杂功能：
+ROD CLI 提供结构化的 5 阶段开发工作流，专为大型项目的模块化开发设计：
 
 ### 1. 模块创建 (`/module`)
 ```bash
@@ -229,41 +234,46 @@ ROD CLI 提供结构化的 5 阶段开发工作流，用于构建复杂功能：
 - 初始化规范模板
 - 支持分层模块组织
 
-### 2. 规范分析 (`/spec`)
+### 2. 规范分析 (`/specify`)
 ```bash
 # 分析和记录需求
-/spec "实现基于 JWT 的认证"
+/specify "实现基于 JWT 的认证"
 ```
-- 创建详细的 EARS 格式需求
+- 创建详细的功能规范文档
+- 支持模块间依赖关系声明
 - 包含业务规则和验收标准
-- 生成带有 Mermaid 图表的结构化规范
+- 生成结构化的需求文档
 
-### 3. 技术设计 (`/design`)
+### 3. 技术设计 (`/plan`)
 ```bash
 # 生成全面的设计文档
-/design
+/plan
 ```
 - 创建架构和组件设计
 - 定义 API、数据模型和接口
+- 生成跨模块接口设计 (如有依赖)
 - 将需求映射到技术实现
 
-### 4. 任务规划 (`/todo`)
+### 4. 任务规划 (`/tasks`)
 ```bash
 # 分解为可操作的开发任务
-/todo
+/tasks
 ```
 - 将设计转换为开发任务
 - 创建测试驱动开发计划
-- 提供实施路线图
+- 支持模块集成任务生成
+- 提供并行执行的实施路线图
 
-### 5. 进度同步 (`/sync`)
+### 5. 进度同步 (`/progress`)
 ```bash
 # 同步进度到项目路线图
-/sync
+/progress
 ```
 - 更新模块完成状态
-- 同步进度到父模块和路线图
-- 跟踪依赖关系和里程碑
+- 聚合项目整体进度
+- 同步进度到项目路线图
+- 跟踪模块间依赖关系和里程碑
+- 支持大型项目进度管理
 
 ## 命令参考
 
@@ -584,6 +594,22 @@ MIT 许可证 - 详见 [LICENSE](LICENSE) 文件。
 - ⚡ **本地模板生成**：内置模板消除网络依赖
 - 🎯 **TypeScript 实现**：完整类型安全和现代开发体验
 - 🌐 **增强跨平台支持**：更好的 Windows/Unix 兼容性
+- 🏗️ **模块化架构**：专为大型项目设计的五步工作法
+- 📊 **进度管理**：项目级进度跟踪和模块依赖管理
+
+## ROD vs SDD 对比
+
+ROD CLI 基于 SDD (Specification-Driven Development) 方法论，但针对大型项目进行了增强：
+
+| 特性 | SDD 原版 | ROD CLI |
+|------|----------|---------|
+| **架构** | 单特性分支 | 模块化架构 |
+| **工作流** | 3步 (specify→plan→tasks) | 5步 (module→specify→plan→tasks→progress) |
+| **依赖管理** | 独立特性 | 跨模块依赖协调 |
+| **进度跟踪** | 无 | 项目级进度聚合 |
+| **适用场景** | 中小型项目 | 大型项目 |
+| **模块接口** | 无 | 专门的接口设计阶段 |
+| **并行开发** | 有限支持 | 完整的模块并行开发 |
 
 ---
 

@@ -174,24 +174,24 @@ rod init --script ps
 ```
 my-project/
 ├── .claude-config.json           # AI-specific configuration
-├── .claude/commands/             # AI assistant commands (roadmap workflow)
+├── .claude/commands/             # AI assistant commands (5-stage workflow)
 │   ├── module.md                # Module creation and navigation
-│   ├── spec.md                  # Specification analysis
-│   ├── design.md                # Technical design
-│   ├── todo.md                  # Task breakdown
-│   └── sync.md                  # Progress synchronization
+│   ├── specify.md               # Requirements specification analysis
+│   ├── plan.md                  # Technical design and planning
+│   ├── tasks.md                 # Task breakdown and generation
+│   └── progress.md              # Progress synchronization management
 ├── .specify/                    # Shared resources
 │   ├── scripts/                 # Cross-platform automation
 │   │   └── bash/                # or powershell/
-│   │       ├── create-module.sh
-│   │       ├── spec.sh
-│   │       ├── generate-design.sh
-│   │       ├── create-todos.sh
+│   │       ├── analyze-modules.sh
+│   │       ├── create-module-spec.sh
+│   │       ├── setup-module-plan.sh
+│   │       ├── generate-module-tasks.sh
 │   │       └── sync-progress.sh
 │   ├── templates/               # Document templates
 │   │   ├── spec-template.md     # Feature specification template
-│   │   ├── design-template.md   # Design document template
-│   │   ├── todo-template.md     # Task list template
+│   │   ├── plan-template.md     # Technical design template
+│   │   ├── tasks-template.md    # Task list template
 │   │   └── roadmap-template.md  # Project roadmap template
 │   └── memory/                  # Project constitution
 │       ├── constitution.md      # Project principles
@@ -199,16 +199,21 @@ my-project/
 └── specs/                       # Project specifications
     ├── roadmap.md              # Project roadmap
     └── modules/                # Feature modules
-        └── {module-name}/      # Individual modules
-            ├── spec.md         # Module specification
-            ├── design.md       # Module design
-            ├── todo.md         # Module tasks
-            └── modules/        # Sub-modules (recursive)
+        └── [module-path]/      # Module directory
+            └── [feature-name]/ # Specific feature
+                ├── spec.md           # Feature specification
+                ├── plan.md           # Technical design
+                ├── research.md       # Technical research
+                ├── data-model.md     # Data models
+                ├── contracts/        # API contracts
+                ├── quickstart.md     # Test scenarios
+                ├── module-interfaces.md  # Module interfaces (if dependencies)
+                └── tasks.md          # Development tasks
 ```
 
 ## Roadmap-Driven Workflow
 
-ROD CLI provides a structured 5-stage development workflow for building complex features:
+ROD CLI provides a structured 5-stage development workflow designed for large-scale modular development:
 
 ### 1. Module Creation (`/module`)
 ```bash
@@ -219,41 +224,46 @@ ROD CLI provides a structured 5-stage development workflow for building complex 
 - Initializes specification templates
 - Supports hierarchical module organization
 
-### 2. Specification Analysis (`/spec`)
+### 2. Specification Analysis (`/specify`)
 ```bash
 # Analyze and document requirements
-/spec "Implement JWT-based authentication"
+/specify "Implement JWT-based authentication"
 ```
-- Creates detailed EARS-format requirements
+- Creates detailed feature specification documents
+- Supports inter-module dependency declarations
 - Includes business rules and acceptance criteria
-- Generates structured specifications with Mermaid diagrams
+- Generates structured requirement documents
 
-### 3. Technical Design (`/design`)
+### 3. Technical Design (`/plan`)
 ```bash
 # Generate comprehensive design document
-/design
+/plan
 ```
 - Creates architecture and component design
 - Defines APIs, data models, and interfaces
+- Generates cross-module interface design (if dependencies exist)
 - Maps requirements to technical implementation
 
-### 4. Task Planning (`/todo`)
+### 4. Task Planning (`/tasks`)
 ```bash
 # Break down into actionable development tasks
-/todo
+/tasks
 ```
 - Converts design into development tasks
 - Creates test-driven development plan
-- Provides implementation roadmap
+- Supports module integration task generation
+- Provides parallel execution implementation roadmap
 
-### 5. Progress Synchronization (`/sync`)
+### 5. Progress Synchronization (`/progress`)
 ```bash
 # Sync progress to project roadmap
-/sync
+/progress
 ```
 - Updates module completion status
-- Syncs progress to parent modules and roadmap
-- Tracks dependencies and milestones
+- Aggregates overall project progress
+- Syncs progress to project roadmap
+- Tracks inter-module dependencies and milestones
+- Supports large-scale project progress management
 
 ## Command Reference
 
@@ -557,6 +567,20 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - **80% faster** project initialization
 - **40% less** memory usage
 - **100% reliable** in offline environments
+
+## ROD vs SDD Comparison
+
+ROD CLI is based on SDD (Specification-Driven Development) methodology but enhanced for large-scale projects:
+
+| Feature | SDD Original | ROD CLI |
+|---------|--------------|---------|
+| **Architecture** | Single feature branches | Modular architecture |
+| **Workflow** | 3-step (specify→plan→tasks) | 5-step (module→specify→plan→tasks→progress) |
+| **Dependency Management** | Independent features | Cross-module dependency coordination |
+| **Progress Tracking** | None | Project-level progress aggregation |
+| **Use Cases** | Small to medium projects | Large-scale projects |
+| **Module Interfaces** | None | Dedicated interface design phase |
+| **Parallel Development** | Limited support | Full modular parallel development |
 
 ---
 

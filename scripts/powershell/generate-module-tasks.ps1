@@ -37,8 +37,8 @@ if (-not $modulePath) {
 
 $moduleDir = Join-Path $repoRoot "specs" "modules" $modulePath
 $requirementsFile = Join-Path $moduleDir "spec.md"
-$designFile = Join-Path $moduleDir "design.md"
-$todoFile = Join-Path $moduleDir "todo.md"
+$designFile = Join-Path $moduleDir "plan.md"
+$todoFile = Join-Path $moduleDir "tasks.md"
 
 # Check if module directory exists
 if (!(Test-Path $moduleDir)) {
@@ -54,21 +54,21 @@ if (!(Test-Path $moduleDir)) {
 # Check if spec.md exists and is completed
 if (!(Test-Path $requirementsFile)) {
     if ($Json) {
-        @{status="error"; message="Requirements file does not exist. Please run /spec first"} | ConvertTo-Json -Compress
+        @{status="error"; message="Requirements file does not exist. Please run /specify first"} | ConvertTo-Json -Compress
     } else {
         Write-Output "ERROR: Requirements file does not exist"
-        Write-Output "Please run '/spec' first to create the requirements"
+        Write-Output "Please run '/specify' first to create the requirements"
     }
     exit 1
 }
 
-# Check if design.md exists and is completed
+# Check if plan.md exists and is completed
 if (!(Test-Path $designFile)) {
     if ($Json) {
-        @{status="error"; message="Design file does not exist. Please run /design first"} | ConvertTo-Json -Compress
+        @{status="error"; message="Design file does not exist. Please run /plan first"} | ConvertTo-Json -Compress
     } else {
         Write-Output "ERROR: Design file does not exist"
-        Write-Output "Please run '/design' first to create the design document"
+        Write-Output "Please run '/plan' first to create the design document"
     }
     exit 1
 }
@@ -80,12 +80,12 @@ if ($designContent -match '\[模块名称\]|\[模块路径\]|\[创建时间\]') 
         @{status="error"; message="Design file appears to be incomplete template. Please complete design first"} | ConvertTo-Json -Compress
     } else {
         Write-Output "ERROR: Design file appears to be incomplete template"
-        Write-Output "Please complete design document first with '/design'"
+        Write-Output "Please complete design document first with '/plan'"
     }
     exit 1
 }
 
-# Check if todo.md already exists and has content
+# Check if tasks.md already exists and has content
 $todoExists = $false
 if ((Test-Path $todoFile) -and (Get-Item $todoFile).Length -gt 0) {
     # Check if it's not just the template
@@ -109,7 +109,7 @@ if (Test-Path $modulesDir) {
         $otherName = $_.Name
         if ($otherName -ne $modulePath) {
             # Check if other module has completed todos for reference
-            $otherTodoFile = Join-Path $_.FullName "todo.md"
+            $otherTodoFile = Join-Path $_.FullName "tasks.md"
             if ((Test-Path $otherTodoFile) -and (Get-Item $otherTodoFile).Length -gt 0) {
                 $otherTodoContent = Get-Content $otherTodoFile -Raw -Encoding UTF8
                 if ($otherTodoContent -notmatch '\[模块名称\]|\[模块路径\]') {

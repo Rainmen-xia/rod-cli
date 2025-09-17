@@ -33,8 +33,8 @@ if [ -d "$MODULE_DIR" ]; then
     TODO_STATUS="missing"
     
     [ -f "$MODULE_DIR/spec.md" ] && REQ_STATUS="exists"
-    [ -f "$MODULE_DIR/design.md" ] && DESIGN_STATUS="exists"
-    [ -f "$MODULE_DIR/todo.md" ] && TODO_STATUS="exists"
+    [ -f "$MODULE_DIR/plan.md" ] && DESIGN_STATUS="exists"
+    [ -f "$MODULE_DIR/tasks.md" ] && TODO_STATUS="exists"
     
     if $JSON_MODE; then
         printf '{"status":"exists","module_dir":"%s","requirements":"%s","design":"%s","todo":"%s"}\n' \
@@ -60,13 +60,13 @@ else
     fi
     
     if [ -f "$TEMPLATE_DIR/design-template.md" ]; then
-        cp "$TEMPLATE_DIR/design-template.md" "$MODULE_DIR/design.md"
-        FILES_CREATED+=("design.md")
+        cp "$TEMPLATE_DIR/design-template.md" "$MODULE_DIR/plan.md"
+        FILES_CREATED+=("plan.md")
     fi
     
     if [ -f "$TEMPLATE_DIR/todo-template.md" ]; then
-        cp "$TEMPLATE_DIR/todo-template.md" "$MODULE_DIR/todo.md"
-        FILES_CREATED+=("todo.md")
+        cp "$TEMPLATE_DIR/todo-template.md" "$MODULE_DIR/tasks.md"
+        FILES_CREATED+=("tasks.md")
     fi
     
     # Update templates with module-specific information
@@ -76,16 +76,16 @@ else
         sed -i.bak "s/\[创建时间\]/$(date '+%Y-%m-%d %H:%M:%S')/g" "$MODULE_DIR/spec.md" && rm "$MODULE_DIR/spec.md.bak"
     fi
     
-    if [ -f "$MODULE_DIR/design.md" ]; then
-        sed -i.bak "s/\[模块名称\]/$MODULE_PATH/g" "$MODULE_DIR/design.md" && rm "$MODULE_DIR/design.md.bak"
-        sed -i.bak "s/\[模块路径\]/$MODULE_PATH/g" "$MODULE_DIR/design.md" && rm "$MODULE_DIR/design.md.bak"
-        sed -i.bak "s/\[创建时间\]/$(date '+%Y-%m-%d %H:%M:%S')/g" "$MODULE_DIR/design.md" && rm "$MODULE_DIR/design.md.bak"
+    if [ -f "$MODULE_DIR/plan.md" ]; then
+        sed -i.bak "s/\[模块名称\]/$MODULE_PATH/g" "$MODULE_DIR/plan.md" && rm "$MODULE_DIR/plan.md.bak"
+        sed -i.bak "s/\[模块路径\]/$MODULE_PATH/g" "$MODULE_DIR/plan.md" && rm "$MODULE_DIR/plan.md.bak"
+        sed -i.bak "s/\[创建时间\]/$(date '+%Y-%m-%d %H:%M:%S')/g" "$MODULE_DIR/plan.md" && rm "$MODULE_DIR/plan.md.bak"
     fi
     
-    if [ -f "$MODULE_DIR/todo.md" ]; then
-        sed -i.bak "s/\[模块名称\]/$MODULE_PATH/g" "$MODULE_DIR/todo.md" && rm "$MODULE_DIR/todo.md.bak"
-        sed -i.bak "s/\[模块路径\]/$MODULE_PATH/g" "$MODULE_DIR/todo.md" && rm "$MODULE_DIR/todo.md.bak"
-        sed -i.bak "s/\[创建时间\]/$(date '+%Y-%m-%d %H:%M:%S')/g" "$MODULE_DIR/todo.md" && rm "$MODULE_DIR/todo.md.bak"
+    if [ -f "$MODULE_DIR/tasks.md" ]; then
+        sed -i.bak "s/\[模块名称\]/$MODULE_PATH/g" "$MODULE_DIR/tasks.md" && rm "$MODULE_DIR/tasks.md.bak"
+        sed -i.bak "s/\[模块路径\]/$MODULE_PATH/g" "$MODULE_DIR/tasks.md" && rm "$MODULE_DIR/tasks.md.bak"
+        sed -i.bak "s/\[创建时间\]/$(date '+%Y-%m-%d %H:%M:%S')/g" "$MODULE_DIR/tasks.md" && rm "$MODULE_DIR/tasks.md.bak"
     fi
     
     if $JSON_MODE; then

@@ -56,8 +56,8 @@ check_module_status() {
     local module_dir="$REPO_ROOT/specs/modules/$module_path"
     
     local req_complete=false
-    local design_complete=false
-    local todo_complete=false
+    local plan_complete=false
+    local tasks_complete=false
     local overall_status="📋 待开始"
     local progress=0
     
@@ -67,39 +67,39 @@ check_module_status() {
         progress=$((progress + 33))
     fi
     
-    # Check design
-    if [ -f "$module_dir/design.md" ] && ! grep -q "\[模块名称\]\|\[模块路径\]" "$module_dir/design.md"; then
-        design_complete=true
+    # Check plan
+    if [ -f "$module_dir/plan.md" ] && ! grep -q "\[模块名称\]\|\[模块路径\]" "$module_dir/plan.md"; then
+        plan_complete=true
         progress=$((progress + 33))
     fi
     
-    # Check todo
-    if [ -f "$module_dir/todo.md" ] && ! grep -q "\[模块名称\]\|\[模块路径\]" "$module_dir/todo.md"; then
-        todo_complete=true
+    # Check tasks
+    if [ -f "$module_dir/tasks.md" ] && ! grep -q "\[模块名称\]\|\[模块路径\]" "$module_dir/tasks.md"; then
+        tasks_complete=true
         progress=$((progress + 34))
         
-        # Check if todos are actually completed
-        if grep -q "✅.*已完成\|✅.*completed" "$module_dir/todo.md" 2>/dev/null; then
+        # Check if tasks are actually completed
+        if grep -q "✅.*已完成\|✅.*completed" "$module_dir/tasks.md" 2>/dev/null; then
             overall_status="✅ 已完成"
-        elif grep -q "❌.*阻塞\|❌.*blocked" "$module_dir/todo.md" 2>/dev/null; then
+        elif grep -q "❌.*阻塞\|❌.*blocked" "$module_dir/tasks.md" 2>/dev/null; then
             overall_status="❌ 阻塞"
-        elif grep -q "⚠️.*风险\|⚠️.*risk" "$module_dir/todo.md" 2>/dev/null; then
+        elif grep -q "⚠️.*风险\|⚠️.*risk" "$module_dir/tasks.md" 2>/dev/null; then
             overall_status="⚠️ 风险"
         else
             overall_status="🔄 进行中"
         fi
-    elif $req_complete && $design_complete; then
+    elif $req_complete && $plan_complete; then
         overall_status="🔄 进行中"
-    elif $req_complete || $design_complete; then
+    elif $req_complete || $plan_complete; then
         overall_status="🔄 进行中"
     fi
     
-    echo "$overall_status|$progress|$req_complete|$design_complete|$todo_complete"
+    echo "$overall_status|$progress|$req_complete|$plan_complete|$tasks_complete"
 }
 
 # Check current module status
 CURRENT_STATUS=$(check_module_status "$MODULE_PATH")
-IFS='|' read -r STATUS PROGRESS REQ_DONE DESIGN_DONE TODO_DONE <<< "$CURRENT_STATUS"
+IFS='|' read -r STATUS PROGRESS REQ_DONE PLAN_DONE TASKS_DONE <<< "$CURRENT_STATUS"
 
 # Check submodules status
 SUBMODULES=()
@@ -137,12 +137,12 @@ PARENT_PATH=""
 if [[ "$MODULE_PATH" == *"/modules/"* ]]; then
     PARENT_PATH=$(echo "$MODULE_PATH" | sed 's|/modules/[^/]*$||')
     PARENT_DIR="$REPO_ROOT/specs/modules/$PARENT_PATH"
-    PARENT_TODO="$PARENT_DIR/todo.md"
+    PARENT_TASKS="$PARENT_DIR/tasks.md"
     
-    # Update parent todo if exists
-    if [ -f "$PARENT_TODO" ]; then
-        # This would update parent todo status - implementation depends on todo format
-        echo "# Would update parent todo: $PARENT_TODO" >/dev/null
+    # Update parent tasks if exists
+    if [ -f "$PARENT_TASKS" ]; then
+        # This would update parent tasks status - implementation depends on tasks format
+        echo "# Would update parent tasks: $PARENT_TASKS" >/dev/null
     fi
 fi
 
@@ -161,8 +161,8 @@ SYNC_REPORT="Progress Sync Report - $(date '+%Y-%m-%d %H:%M:%S')
 
 Current Module: $MODULE_PATH
 - 需求分析: $([ "$REQ_DONE" = "true" ] && echo "✅ 已完成" || echo "📋 待完成")
-- 设计文档: $([ "$DESIGN_DONE" = "true" ] && echo "✅ 已完成" || echo "📋 待完成")
-- 任务清单: $([ "$TODO_DONE" = "true" ] && echo "✅ 已完成" || echo "📋 待完成")
+- 技术设计: $([ "$PLAN_DONE" = "true" ] && echo "✅ 已完成" || echo "📋 待完成")
+- 任务清单: $([ "$TASKS_DONE" = "true" ] && echo "✅ 已完成" || echo "📋 待完成")
 - 整体进度: $TOTAL_PROGRESS%
 - 状态: $STATUS"
 
@@ -183,15 +183,15 @@ Parent Module: $PARENT_PATH (progress updated)"
 fi
 
 if $JSON_MODE; then
-    printf '{"status":"synced","module_path":"%s","progress":%d,"current_status":"%s","requirements_done":%s,"design_done":%s,"todo_done":%s,"submodules_count":%d,"parent_path":"%s","roadmap_updated":%s,"sync_time":"%s"}\n' \
-        "$MODULE_PATH" "$TOTAL_PROGRESS" "$STATUS" "$REQ_DONE" "$DESIGN_DONE" "$TODO_DONE" "${#SUBMODULES[@]}" "$PARENT_PATH" "$ROADMAP_UPDATED" "$(date '+%Y-%m-%d %H:%M:%S')"
+    printf '{"status":"synced","module_path":"%s","progress":%d,"current_status":"%s","requirements_done":%s,"plan_done":%s,"tasks_done":%s,"submodules_count":%d,"parent_path":"%s","roadmap_updated":%s,"sync_time":"%s"}\n' \
+        "$MODULE_PATH" "$TOTAL_PROGRESS" "$STATUS" "$REQ_DONE" "$PLAN_DONE" "$TASKS_DONE" "${#SUBMODULES[@]}" "$PARENT_PATH" "$ROADMAP_UPDATED" "$(date '+%Y-%m-%d %H:%M:%S')"
 else
     echo "MODULE_PATH: $MODULE_PATH"
     echo "PROGRESS: $TOTAL_PROGRESS%"
     echo "STATUS: $STATUS"
     echo "REQUIREMENTS_DONE: $REQ_DONE"
-    echo "DESIGN_DONE: $DESIGN_DONE"
-    echo "TODO_DONE: $TODO_DONE"
+    echo "PLAN_DONE: $PLAN_DONE"
+    echo "TASKS_DONE: $TASKS_DONE"
     echo "SUBMODULES_COUNT: ${#SUBMODULES[@]}"
     [ -n "$PARENT_PATH" ] && echo "PARENT_PATH: $PARENT_PATH"
     echo "ROADMAP_UPDATED: $ROADMAP_UPDATED"

@@ -37,8 +37,8 @@ fi
 
 # File paths
 SPEC_FILE="$FEATURE_DIR/spec.md"
-DESIGN_FILE="$FEATURE_DIR/design.md"
-TODO_FILE="$FEATURE_DIR/todo.md"
+DESIGN_FILE="$FEATURE_DIR/plan.md"
+TODO_FILE="$FEATURE_DIR/tasks.md"
 MODULES_DIR="$FEATURE_DIR/modules"
 
 # Check file existence and content
@@ -84,7 +84,7 @@ calculate_progress() {
     echo $((completed * 100 / total_stages))
 }
 
-# Count tasks in todo.md
+# Count tasks in tasks.md
 count_tasks() {
     if [[ -f "$TODO_FILE" ]]; then
         local total=$(grep -c '^\- \[ \]' "$TODO_FILE" 2>/dev/null || echo "0")
@@ -123,7 +123,7 @@ elif [[ "$design_status" != "complete" ]]; then
 elif [[ "$todo_status" != "complete" ]]; then
     next_step="Execute '/todo' to create actionable task list"
 elif [[ "$task_completed" -lt "$task_total" ]]; then
-    next_step="Continue implementing tasks from todo.md or execute '/sync' to update progress"
+    next_step="Continue implementing tasks from tasks.md or execute '/sync' to update progress"
 else
     next_step="Execute '/sync' to synchronize progress to project roadmap"
 fi
@@ -158,17 +158,17 @@ else
     esac
     
     case "$design_status" in
-        "complete") echo "- ✅ 技术设计: 已完成 (design.md 已创建)" ;;
-        "minimal") echo "- 🔄 技术设计: 进行中 (design.md 内容较少)" ;;
-        "empty") echo "- ⏳ 技术设计: 待开始 (design.md 为空)" ;;
-        *) echo "- ⏳ 技术设计: 待开始 (design.md 不存在)" ;;
+        "complete") echo "- ✅ 技术设计: 已完成 (plan.md 已创建)" ;;
+        "minimal") echo "- 🔄 技术设计: 进行中 (plan.md 内容较少)" ;;
+        "empty") echo "- ⏳ 技术设计: 待开始 (plan.md 为空)" ;;
+        *) echo "- ⏳ 技术设计: 待开始 (plan.md 不存在)" ;;
     esac
     
     case "$todo_status" in
-        "complete") echo "- ✅ 任务规划: 已完成 (todo.md 包含 $task_total 个任务)" ;;
-        "minimal") echo "- 🔄 任务规划: 进行中 (todo.md 内容较少)" ;;
-        "empty") echo "- ⏳ 任务规划: 待开始 (todo.md 为空)" ;;
-        *) echo "- ⏳ 任务规划: 待开始 (todo.md 不存在)" ;;
+        "complete") echo "- ✅ 任务规划: 已完成 (tasks.md 包含 $task_total 个任务)" ;;
+        "minimal") echo "- 🔄 任务规划: 进行中 (tasks.md 内容较少)" ;;
+        "empty") echo "- ⏳ 任务规划: 待开始 (tasks.md 为空)" ;;
+        *) echo "- ⏳ 任务规划: 待开始 (tasks.md 不存在)" ;;
     esac
     
     echo "- 🔄 进度同步: 可根据需要执行"

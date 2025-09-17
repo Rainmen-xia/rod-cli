@@ -37,7 +37,7 @@ if (-not $modulePath) {
 
 $moduleDir = Join-Path $repoRoot "specs" "modules" $modulePath
 $requirementsFile = Join-Path $moduleDir "spec.md"
-$designFile = Join-Path $moduleDir "design.md"
+$designFile = Join-Path $moduleDir "plan.md"
 
 # Check if module directory exists
 if (!(Test-Path $moduleDir)) {
@@ -53,10 +53,10 @@ if (!(Test-Path $moduleDir)) {
 # Check if spec.md exists and has been completed
 if (!(Test-Path $requirementsFile)) {
     if ($Json) {
-        @{status="error"; message="Requirements file does not exist. Please run /spec first"} | ConvertTo-Json -Compress
+        @{status="error"; message="Requirements file does not exist. Please run /specify first"} | ConvertTo-Json -Compress
     } else {
         Write-Output "ERROR: Requirements file does not exist"
-        Write-Output "Please run '/spec' first to create the requirements"
+        Write-Output "Please run '/specify' first to create the requirements"
     }
     exit 1
 }
@@ -68,12 +68,12 @@ if ($reqContent -match '\[模块名称\]|\[模块路径\]|\[创建时间\]') {
         @{status="error"; message="Requirements file appears to be incomplete template. Please complete requirements analysis first"} | ConvertTo-Json -Compress
     } else {
         Write-Output "ERROR: Requirements file appears to be incomplete template"
-        Write-Output "Please complete requirements analysis first with '/spec'"
+        Write-Output "Please complete requirements analysis first with '/specify'"
     }
     exit 1
 }
 
-# Check if design.md already exists and has content
+# Check if plan.md already exists and has content
 $designExists = $false
 if ((Test-Path $designFile) -and (Get-Item $designFile).Length -gt 0) {
     # Check if it's not just the template

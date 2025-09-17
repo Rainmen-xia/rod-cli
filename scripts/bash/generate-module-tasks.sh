@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Create implementation todos based on design document
+# Create implementation tasks based on plan document
 set -e
 
 JSON_MODE=false
@@ -38,8 +38,8 @@ fi
 
 MODULE_DIR="$REPO_ROOT/specs/modules/$MODULE_PATH"
 REQUIREMENTS_FILE="$MODULE_DIR/spec.md"
-DESIGN_FILE="$MODULE_DIR/design.md"
-TODO_FILE="$MODULE_DIR/todo.md"
+DESIGN_FILE="$MODULE_DIR/plan.md"
+TODO_FILE="$MODULE_DIR/tasks.md"
 
 # Check if module directory exists
 if [ ! -d "$MODULE_DIR" ]; then
@@ -55,37 +55,37 @@ fi
 # Check if spec.md exists and is completed
 if [ ! -f "$REQUIREMENTS_FILE" ]; then
     if $JSON_MODE; then
-        printf '{"status":"error","message":"Requirements file does not exist. Please run /spec first"}\n'
+        printf '{"status":"error","message":"Requirements file does not exist. Please run /specify first"}\n'
     else
         echo "ERROR: Requirements file does not exist"
-        echo "Please run '/spec' first to create the requirements"
+        echo "Please run '/specify' first to create the requirements"
     fi
     exit 1
 fi
 
-# Check if design.md exists and is completed
+# Check if plan.md exists and is completed
 if [ ! -f "$DESIGN_FILE" ]; then
     if $JSON_MODE; then
-        printf '{"status":"error","message":"Design file does not exist. Please run /design first"}\n'
+        printf '{"status":"error","message":"Plan file does not exist. Please run /plan first"}\n'
     else
         echo "ERROR: Design file does not exist"
-        echo "Please run '/design' first to create the design document"
+        echo "Please run '/plan' first to create the plan document"
     fi
     exit 1
 fi
 
-# Check if design file is still a template
+# Check if plan file is still a template
 if grep -q "\[模块名称\]\|\[模块路径\]\|\[创建时间\]" "$DESIGN_FILE"; then
     if $JSON_MODE; then
-        printf '{"status":"error","message":"Design file appears to be incomplete template. Please complete design first"}\n'
+        printf '{"status":"error","message":"Plan file appears to be incomplete template. Please complete plan first"}\n'
     else
         echo "ERROR: Design file appears to be incomplete template"
-        echo "Please complete design document first with '/design'"
+        echo "Please complete plan document first with '/plan'"
     fi
     exit 1
 fi
 
-# Check if todo.md already exists and has content
+# Check if tasks.md already exists and has content
 TODO_EXISTS=false
 if [ -f "$TODO_FILE" ] && [ -s "$TODO_FILE" ]; then
     # Check if it's not just the template
@@ -94,10 +94,10 @@ if [ -f "$TODO_FILE" ] && [ -s "$TODO_FILE" ]; then
     fi
 fi
 
-# Extract information from requirements and design
+# Extract information from requirements and plan
 REQ_COUNT=$(grep -c "### REQ-" "$REQUIREMENTS_FILE" 2>/dev/null || echo "0")
-DESIGN_COMPONENTS=$(grep -c "#### 组件\|#### Component" "$DESIGN_FILE" 2>/dev/null || echo "0")
-DESIGN_INTERFACES=$(grep -c "interface\|Interface" "$DESIGN_FILE" 2>/dev/null || echo "0")
+PLAN_COMPONENTS=$(grep -c "#### 组件\|#### Component" "$DESIGN_FILE" 2>/dev/null | head -1 || echo "0")
+PLAN_INTERFACES=$(grep -c "interface\|Interface" "$DESIGN_FILE" 2>/dev/null | head -1 || echo "0")
 
 # Check for constitution.md and constitution compliance in design
 CONSTITUTION_FILE="$REPO_ROOT/.specify/memory/constitution.md"
@@ -105,7 +105,7 @@ CONSTITUTION_EXISTS=false
 CONSTITUTION_COMPLIANT=false
 if [ -f "$CONSTITUTION_FILE" ]; then
     CONSTITUTION_EXISTS=true
-    # Check if design document contains constitution compliance section
+    # Check if plan document contains constitution compliance section
     if grep -q "Constitution合规检查\|Constitution.*合规\|合规性声明" "$DESIGN_FILE"; then
         CONSTITUTION_COMPLIANT=true
     fi
@@ -119,16 +119,16 @@ if [ -d "$REPO_ROOT/specs/modules" ]; then
         other_name=$(basename "$other_module")
         [ "$other_name" = "$MODULE_PATH" ] && continue
         
-        # Check if other module has completed todos for reference
-        if [ -f "$other_module/todo.md" ] && ! grep -q "\[模块名称\]\|\[模块路径\]" "$other_module/todo.md"; then
+        # Check if other module has completed tasks for reference
+        if [ -f "$other_module/tasks.md" ] && ! grep -q "\[模块名称\]\|\[模块路径\]" "$other_module/tasks.md"; then
             SIMILAR_MODULES+=("$other_name")
         fi
     done
 fi
 
 if $JSON_MODE; then
-    printf '{"status":"ready","module_path":"%s","module_dir":"%s","requirements_file":"%s","design_file":"%s","todo_file":"%s","todo_exists":%s,"requirements_count":%d,"design_components":%d,"design_interfaces":%d,"constitution_file":"%s","constitution_exists":%s,"constitution_compliant":%s,"similar_modules":[' \
-        "$MODULE_PATH" "$MODULE_DIR" "$REQUIREMENTS_FILE" "$DESIGN_FILE" "$TODO_FILE" "$TODO_EXISTS" "$REQ_COUNT" "$DESIGN_COMPONENTS" "$DESIGN_INTERFACES" "$CONSTITUTION_FILE" "$CONSTITUTION_EXISTS" "$CONSTITUTION_COMPLIANT"
+    printf '{"status":"ready","module_path":"%s","module_dir":"%s","requirements_file":"%s","plan_file":"%s","tasks_file":"%s","tasks_exists":%s,"requirements_count":%d,"plan_components":%d,"plan_interfaces":%d,"constitution_file":"%s","constitution_exists":%s,"constitution_compliant":%s,"similar_modules":[' \
+        "$MODULE_PATH" "$MODULE_DIR" "$REQUIREMENTS_FILE" "$DESIGN_FILE" "$TODO_FILE" "$TODO_EXISTS" "$REQ_COUNT" "$PLAN_COMPONENTS" "$PLAN_INTERFACES" "$CONSTITUTION_FILE" "$CONSTITUTION_EXISTS" "$CONSTITUTION_COMPLIANT"
     
     if [ ${#SIMILAR_MODULES[@]} -gt 0 ]; then
         printf '"%s"' "${SIMILAR_MODULES[0]}"
@@ -141,12 +141,12 @@ else
     echo "MODULE_PATH: $MODULE_PATH"
     echo "MODULE_DIR: $MODULE_DIR"
     echo "REQUIREMENTS_FILE: $REQUIREMENTS_FILE"
-    echo "DESIGN_FILE: $DESIGN_FILE"
-    echo "TODO_FILE: $TODO_FILE"
-    echo "TODO_EXISTS: $TODO_EXISTS"
+    echo "PLAN_FILE: $DESIGN_FILE"
+    echo "TASKS_FILE: $TODO_FILE"
+    echo "TASKS_EXISTS: $TODO_EXISTS"
     echo "REQUIREMENTS_COUNT: $REQ_COUNT"
-    echo "DESIGN_COMPONENTS: $DESIGN_COMPONENTS"
-    echo "DESIGN_INTERFACES: $DESIGN_INTERFACES"
+    echo "PLAN_COMPONENTS: $PLAN_COMPONENTS"
+    echo "PLAN_INTERFACES: $PLAN_INTERFACES"
     echo "CONSTITUTION_FILE: $CONSTITUTION_FILE"
     echo "CONSTITUTION_EXISTS: $CONSTITUTION_EXISTS"
     echo "CONSTITUTION_COMPLIANT: $CONSTITUTION_COMPLIANT"

@@ -38,7 +38,7 @@ fi
 
 MODULE_DIR="$REPO_ROOT/specs/modules/$MODULE_PATH"
 REQUIREMENTS_FILE="$MODULE_DIR/spec.md"
-DESIGN_FILE="$MODULE_DIR/design.md"
+DESIGN_FILE="$MODULE_DIR/plan.md"
 
 # Check if module directory exists
 if [ ! -d "$MODULE_DIR" ]; then
@@ -54,10 +54,10 @@ fi
 # Check if spec.md exists and has been completed
 if [ ! -f "$REQUIREMENTS_FILE" ]; then
     if $JSON_MODE; then
-        printf '{"status":"error","message":"Requirements file does not exist. Please run /spec first"}\n'
+        printf '{"status":"error","message":"Requirements file does not exist. Please run /specify first"}\n'
     else
         echo "ERROR: Requirements file does not exist"
-        echo "Please run '/spec' first to create the requirements"
+        echo "Please run '/specify' first to create the requirements"
     fi
     exit 1
 fi
@@ -68,12 +68,12 @@ if grep -q "\[模块名称\]\|\[模块路径\]\|\[创建时间\]" "$REQUIREMENTS
         printf '{"status":"error","message":"Requirements file appears to be incomplete template. Please complete requirements analysis first"}\n'
     else
         echo "ERROR: Requirements file appears to be incomplete template"
-        echo "Please complete requirements analysis first with '/spec'"
+        echo "Please complete requirements analysis first with '/specify'"
     fi
     exit 1
 fi
 
-# Check if design.md already exists and has content
+# Check if plan.md already exists and has content
 DESIGN_EXISTS=false
 if [ -f "$DESIGN_FILE" ] && [ -s "$DESIGN_FILE" ]; then
     # Check if it's not just the template
@@ -108,7 +108,7 @@ if [ -d "$REPO_ROOT/specs/modules" ]; then
 fi
 
 if $JSON_MODE; then
-    printf '{"status":"ready","module_path":"%s","module_dir":"%s","requirements_file":"%s","design_file":"%s","design_exists":%s,"requirements_count":%d,"constitution_file":"%s","constitution_exists":%s,"similar_modules":[' \
+    printf '{"status":"ready","module_path":"%s","module_dir":"%s","requirements_file":"%s","plan_file":"%s","plan_exists":%s,"requirements_count":%d,"constitution_file":"%s","constitution_exists":%s,"similar_modules":[' \
         "$MODULE_PATH" "$MODULE_DIR" "$REQUIREMENTS_FILE" "$DESIGN_FILE" "$DESIGN_EXISTS" "$REQ_COUNT" "$CONSTITUTION_FILE" "$CONSTITUTION_EXISTS"
     
     if [ ${#SIMILAR_MODULES[@]} -gt 0 ]; then
