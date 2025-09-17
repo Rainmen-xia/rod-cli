@@ -568,7 +568,7 @@ export class LocalTemplateGenerator {
     filesCreated.push(modulesDir);
     
     // Create README for modules directory
-    const modulesReadmeContent = `# 模块目录\n\n此目录包含项目的各个模块规范。每个模块应包含以下文件：\n\n- \`spec.md\` - 规格说明\n- \`design.md\` - 设计文档\n- \`todo.md\` - 任务清单\n\n## 模块结构\n\n模块可以是递归的，即模块内可以包含子模块，通过 \`modules/\` 子目录实现。\n\n## 使用说明\n\n1. 使用 \`/module <模块名>\` 创建新模块\n2. 使用 \`/spec\` 分析规格\n3. 使用 \`/design\` 生成设计文档\n4. 使用 \`/todo\` 创建任务清单\n5. 使用 \`/sync\` 同步进度到roadmap\n`;
+    const modulesReadmeContent = `# 模块目录\n\n此目录包含项目的各个模块规范。每个模块应包含以下文件：\n\n- \`spec.md\` - 规格说明\n- \`plan.md\` - 设计文档\n- \`tasks.md\` - 任务清单\n\n## 模块结构\n\n模块可以是递归的，即模块内可以包含子模块，通过 \`modules/\` 子目录实现。\n\n## 使用说明\n\n1. 使用 \`/module <模块名>\` 创建新模块\n2. 使用 \`/specify\` 分析规格\n3. 使用 \`/plan\` 生成设计文档\n4. 使用 \`/tasks\` 创建任务清单\n5. 使用 \`/progress\` 同步进度到roadmap\n`;
     
     const modulesReadmePath = path.join(modulesDir, 'README.md');
     await fs.writeFile(modulesReadmePath, modulesReadmeContent, 'utf8');
