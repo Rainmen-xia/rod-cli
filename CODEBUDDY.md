@@ -176,3 +176,5 @@ await generator.generateTemplate({
 - **Rules**: Strict TypeScript rules with type checking
 - **Ignored Patterns**: `dist/`, `node_modules/`, and config files
 - **Environment**: Node.js and Jest globals enabled
+
+请查看CLAUDE.md文件

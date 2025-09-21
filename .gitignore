@@ -50,3 +50,6 @@ junit.xml
 reference/
 
 test-codebuddy
+
+# Internal packages (not for public repository)
+packages/internal-templates/

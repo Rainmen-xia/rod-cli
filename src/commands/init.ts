@@ -51,7 +51,8 @@ export class InitCommand {
         scriptType: config.scriptType,
         workflowMode: config.workflowMode,
         projectPath: config.projectPath,
-        projectName: config.projectName
+        projectName: config.projectName,
+        templateName: args.template
       };
 
       const result = await this.templateGenerator.generateTemplate(templateConfig);
@@ -257,6 +258,7 @@ Usage:
 
 Options:
   --ai <assistant>          AI assistant to use (claude, copilot, gemini, cursor, codebuddy)
+  --template <name>         Template name to use (for internal templates)
   --no-git                  Skip git repository initialization
   --skip-tls                Skip SSL/TLS verification (not recommended)
   --ignore-agent-tools      Skip AI agent tool checks
@@ -266,10 +268,18 @@ Notes:
   • If no project name is provided, initializes in the current directory
   • Script type (bash/powershell) is automatically detected based on your platform
   • Always uses the roadmap workflow (module → spec → design → todo → sync)
+  • Template option supports both local and NPM packages from internal registry
+
+Template behavior:
+  • If --template is specified, CLI checks for global NPM package @tencent/rod-cli-templates
+  • If not installed, executes: npm install -g @tencent/rod-cli-templates --registry=https://npm.tencent.com
+  • Reads specific template (e.g., pui/) directly from global node_modules
+  • Template updates: npm update -g @tencent/rod-cli-templates
 
 Examples:
   rod init my-project --ai claude       # Create new directory 'my-project'
   rod init --ai copilot                 # Initialize in current directory
   rod init my-app --ai gemini --debug   # Create with debug output
+  rod init --template pui --ai claude   # Install PUI template from NPM and use it
 `;
 }

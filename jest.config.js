@@ -23,6 +23,39 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1'
   },
-  testTimeout: 30000,
-  verbose: true
+  verbose: true,
+  // Test organization
+  projects: [
+    {
+      preset: 'ts-jest',
+      testEnvironment: 'node',
+      displayName: 'unit',
+      testMatch: ['<rootDir>/tests/unit/**/*.test.ts'],
+      testTimeout: 10000,
+      moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1'
+      }
+    },
+    {
+      preset: 'ts-jest',
+      testEnvironment: 'node',
+      displayName: 'integration',
+      testMatch: ['<rootDir>/tests/integration/**/*.test.ts'],
+      testTimeout: 30000,
+      moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1'
+      }
+    },
+    {
+      preset: 'ts-jest',
+      testEnvironment: 'node',
+      displayName: 'e2e',
+      testMatch: ['<rootDir>/tests/e2e/**/*.test.ts'],
+      testTimeout: 60000,
+      maxConcurrency: 1,
+      moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1'
+      }
+    }
+  ]
 };

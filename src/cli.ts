@@ -55,6 +55,7 @@ program
   .description('Initialize a new ROD project with rule-oriented development structure')
   .argument('[project-name]', 'Name for your new project directory')
   .option('--ai <assistant>', 'AI assistant to use', validateAIAssistant)
+  .option('--template <name>', 'Template name to use (for internal templates)')
   .option('--no-git', 'Skip git repository initialization', false)
   .option('--skip-tls', 'Skip SSL/TLS verification', false)
   .option('--ignore-agent-tools', 'Skip checks for AI agent tools', false)
@@ -67,6 +68,7 @@ program
         ai: options.ai as AIAssistant,
         script: undefined, // Always auto-detect
         workflow: undefined, // Always use roadmap
+        template: options.template,
         here: !projectName, // If no project name, use current directory
         noGit: !options.git, // Commander negates no-git to git
         skipTls: options.skipTls,

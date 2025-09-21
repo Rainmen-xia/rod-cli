@@ -30,6 +30,7 @@ export interface InitCommandArgs extends CLIArgs {
   ai?: 'claude' | 'copilot' | 'gemini' | 'cursor' | 'codebuddy';
   script?: 'sh' | 'ps';
   workflow?: 'legacy' | 'roadmap';
+  template?: string; // Template name for internal templates
   here?: boolean;
   noGit?: boolean;
   skipTls?: boolean;
@@ -74,6 +75,12 @@ export const CLI_COMMANDS: CLICommand[] = [
         default: 'roadmap'
       },
       {
+        name: 'template',
+        description: 'Template name to use (for internal templates)',
+        type: 'string',
+        required: false
+      },
+      {
         name: 'here',
         description: 'Initialize project in current directory',
         type: 'boolean',
@@ -104,7 +111,7 @@ export const CLI_COMMANDS: CLICommand[] = [
         default: false
       }
     ],
-    handler: async (args: InitCommandArgs) => {
+    handler: async (_args: InitCommandArgs) => {
       // Implementation contract - must be fulfilled
       throw new Error('Not implemented');
     }
@@ -120,7 +127,7 @@ export const CLI_COMMANDS: CLICommand[] = [
         default: false
       }
     ],
-    handler: async (args: CheckCommandArgs) => {
+    handler: async (_args: CheckCommandArgs) => {
       // Implementation contract - must be fulfilled
       throw new Error('Not implemented');
     }
