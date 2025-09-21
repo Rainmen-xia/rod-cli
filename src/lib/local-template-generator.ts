@@ -206,7 +206,8 @@ export class LocalTemplateGenerator {
    * Generate from internal template
    */
   private async generateFromInternalTemplate(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
-    const templatePath = path.join(this.internalTemplatePath, config.templateName!);
+    // Get NPM template path from NPM template manager
+    const templatePath = await this.npmTemplateManager.getTemplatePath(config.templateName!);
 
     // Copy entire internal template structure (excluding commands, scripts, memory - these are handled separately)
     await this.copyDirectoryRecursive(templatePath, config.projectPath, filesCreated, ['commands', 'scripts', 'memory']);
@@ -304,7 +305,8 @@ export class LocalTemplateGenerator {
     await fs.mkdir(specifyDir, { recursive: true });
 
     // Copy templates directory from internal template (now at root level)
-    const internalTemplatesDir = path.join(this.internalTemplatePath, config.templateName!, 'templates');
+    const templateBasePath = await this.npmTemplateManager.getTemplatePath(config.templateName!);
+    const internalTemplatesDir = path.join(templateBasePath, 'templates');
     const projectTemplatesDir = path.join(specifyDir, 'templates');
 
     if (await this.directoryExists(internalTemplatesDir)) {
@@ -316,7 +318,7 @@ export class LocalTemplateGenerator {
     }
 
     // Copy memory files from internal template if they exist, otherwise use default
-    const internalMemoryDir = path.join(this.internalTemplatePath, config.templateName!, 'memory');
+    const internalMemoryDir = path.join(templateBasePath, 'memory');
     const projectMemoryDir = path.join(specifyDir, 'memory');
 
     if (await this.directoryExists(internalMemoryDir)) {
@@ -336,7 +338,8 @@ export class LocalTemplateGenerator {
    */
   private async copyInternalScripts(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
     const scriptsDestDir = path.join(config.projectPath, '.specify', 'scripts');
-    const internalScriptsDir = path.join(this.internalTemplatePath, config.templateName!, 'scripts');
+    const templateBasePath = await this.npmTemplateManager.getTemplatePath(config.templateName!);
+    const internalScriptsDir = path.join(templateBasePath, 'scripts');
 
     if (await this.directoryExists(internalScriptsDir)) {
       // Copy scripts from internal template
@@ -377,7 +380,8 @@ export class LocalTemplateGenerator {
     await fs.mkdir(commandsDir, { recursive: true });
 
     // Get internal template commands (now at root level)
-    const internalCommandsDir = path.join(this.internalTemplatePath, config.templateName!, 'commands');
+    const templateBasePath = await this.npmTemplateManager.getTemplatePath(config.templateName!);
+    const internalCommandsDir = path.join(templateBasePath, 'commands');
 
     if (await this.directoryExists(internalCommandsDir)) {
       const commandFiles = await fs.readdir(internalCommandsDir);
