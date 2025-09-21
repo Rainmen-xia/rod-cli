@@ -4,10 +4,10 @@
  * Manages dynamic installation and discovery of template packages from internal npm registry
  */
 
+import chalk from 'chalk';
+import { execSync } from 'child_process';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
-import chalk from 'chalk';
 
 export interface NPMTemplateConfig {
   templateName: string;
@@ -29,7 +29,7 @@ export class NPMTemplateManager {
   private globalNodeModulesPath: string | null = null;
 
   constructor(defaultRegistry?: string) {
-    this.defaultRegistry = defaultRegistry || 'https://npm.tencent.com'; // Internal npm registry
+    this.defaultRegistry = defaultRegistry || 'https://mirrors.tencent.com/npm/'; // Internal npm registry
   }
 
   /**
@@ -102,11 +102,12 @@ export class NPMTemplateManager {
     try {
       console.log(chalk.blue(`📦 Installing template package ${packageName}@${version} globally...`));
 
-      // Install package globally
-      const installCmd = `npm install -g ${packageName}@${version} --registry=${registry}`;
+      // Install package globally with non-interactive flags
+      const installCmd = `npm install -g ${packageName}@${version} --registry=${registry} --silent --no-audit --no-fund`;
+      
 
       execSync(installCmd, {
-        stdio: 'pipe',
+        stdio: 'inherit', // Allow npm output to display directly
         timeout: 60000 // 60 second timeout
       });
 
@@ -134,8 +135,20 @@ export class NPMTemplateManager {
       };
 
     } catch (error) {
-      const err = error as Error;
-      errors.push(`Failed to install template package globally: ${err.message}`);
+      const err = error as any;
+      let errorMessage = `Failed to install template package globally: ${err.message}`;
+
+      // Add more specific error details for common issues
+      if (err.code === 'ETIMEDOUT') {
+        errorMessage += '\nThis appears to be a timeout issue. Try running manually: ' +
+                       `npm install -g ${packageName}@${version} --registry=${registry}`;
+      } else if (err.code === 'EACCES') {
+        errorMessage += '\nPermission denied. Try running with sudo or check npm prefix permissions.';
+      } else if (err.status && err.signal) {
+        errorMessage += `\nExit status: ${err.status}, Signal: ${err.signal}`;
+      }
+
+      errors.push(errorMessage);
 
       return {
         success: false,

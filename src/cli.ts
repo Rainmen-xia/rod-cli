@@ -6,17 +6,17 @@
  * ROD CLI - Rule-Oriented Development toolkit for specification-driven development
  */
 
-import { Command } from 'commander';
 import chalk from 'chalk';
-import { 
-  executeInitCommand, 
-  validateInitArgs, 
-  getInitCommandHelp 
-} from './commands/init';
-import { 
-  executeCheckCommand, 
-  getCheckCommandHelp 
+import { Command } from 'commander';
+import {
+  executeCheckCommand,
+  getCheckCommandHelp
 } from './commands/check';
+import {
+  executeInitCommand,
+  getInitCommandHelp,
+  validateInitArgs
+} from './commands/init';
 import { ExitCode } from './contracts/cli-interface';
 import { AIAssistant, ScriptType, WorkflowMode } from './types/cli-config';
 
