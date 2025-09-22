@@ -1,8 +1,7 @@
 ---
 description: 创建模块目录结构，为项目组织和开发提供基础架构
 scripts:
-  sh: .specify/scripts/bash/analyze-modules.sh --json "{ARGS}"
-  ps: .specify/scripts/powershell/analyze-modules.ps1 -Json "{ARGS}"
+  node: node .specify/scripts/analyze-modules.js --json {ARGS}
 ---
 
 快速创建模块目录结构，支持灵活的项目组织方式。

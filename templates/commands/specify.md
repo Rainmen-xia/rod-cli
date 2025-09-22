@@ -1,8 +1,7 @@
 ---
 description: 在模块目录中创建详细的功能规范，沉淀业务需求和验收标准
 scripts:
-  sh: .specify/scripts/bash/create-module-spec.sh --json "{ARGS}"
-  ps: .specify/scripts/powershell/create-module-spec.ps1 -Json "{ARGS}"
+  node: node .specify/scripts/create-module-spec.js --json {ARGS}
 ---
 
 在当前模块目录中创建功能规范文档，为后续的plan和tasks阶段提供明确的需求基础。

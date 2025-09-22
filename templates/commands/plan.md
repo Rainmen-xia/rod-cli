@@ -1,8 +1,7 @@
 ---
 description: 基于模块需求规范执行技术设计规划，生成完整的实现方案和设计文档
 scripts:
-  sh: .specify/scripts/bash/setup-module-plan.sh --json
-  ps: .specify/scripts/powershell/setup-module-plan.ps1 -Json
+  node: node .specify/scripts/setup-module-plan.js --json
 ---
 
 在当前模块目录中执行技术设计规划，基于spec.md生成完整的技术实现方案。

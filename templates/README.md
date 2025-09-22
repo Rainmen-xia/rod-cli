@@ -14,9 +14,9 @@ templates/
 │   ├── *.md              # 命令定义文件
 ├── memory/               # 项目宪法和记忆文件（可选）
 │   └── constitution.md   # 项目开发原则
-├── scripts/              # 自动化脚本（可选）
-│   ├── bash/            # Bash 脚本
-│   └── powershell/      # PowerShell 脚本
+├── scripts/              # Node.js 自动化脚本（可选）
+│   ├── *.js             # Node.js 脚本文件
+│   └── common.js        # 通用工具函数
 ├── *.md                  # 模板文档文件
 └── README.md             # 模板说明
 ```
@@ -36,8 +36,7 @@ templates/
 ---
 description: 命令的简短描述，说明其主要功能
 scripts:
-  sh: .specify/scripts/bash/script-name.sh --json "{ARGS}"
-  ps: .specify/scripts/powershell/script-name.ps1 -Json "{ARGS}"
+  node: node .specify/scripts/script-name.js --json {ARGS}
 ---
 ```
 
@@ -68,9 +67,9 @@ scripts:
 
 ### 3. 脚本引用规范
 - 脚本路径使用相对路径 `.specify/scripts/`
-- 支持 Bash (`sh`) 和 PowerShell (`ps`) 两种脚本
-- 参数传递使用 `"{ARGS}"` 占位符
-- 保持跨平台兼容性
+- 使用 Node.js (`node`) 统一脚本执行环境
+- 参数传递使用 `{ARGS}` 占位符
+- 依赖 Node.js 内置模块，无需额外依赖
 
 ## 模板文档规范
 
@@ -92,6 +91,41 @@ scripts:
 - 输入参数说明
 - 执行流程指导
 - 质量检查清单
+
+## 脚本规范
+
+### 1. 脚本组织
+- `scripts/` - 包含所有 Node.js 脚本文件
+- `scripts/common.js` - 通用工具函数和实用工具
+
+### 2. 脚本命名约定
+- 使用连字符分隔的小写命名：`create-module.js`
+- 脚本名称应清楚表达其功能
+- 统一使用 `.js` 扩展名
+
+### 3. 脚本内容要求
+- 使用 Node.js 内置模块实现，无需额外依赖
+- 包含必要的错误处理和参数验证
+- 支持 `--json` 参数用于结构化输出
+- 包含简要的脚本用途说明注释
+- 脚本头部使用 `#!/usr/bin/env node` 声明
+
+### 4. 技术要求
+- **仅使用 Node.js 内置模块**：`fs`, `path`, `child_process`, `process`
+- **严格禁止外部依赖**：不允许使用任何第三方 npm 包，确保脚本的轻量性和独立性
+- **跨平台兼容**：确保在 Windows、macOS、Linux 上正常运行
+- **轻量设计**：无需安装额外 npm 包依赖
+- **错误处理**：合理的异常捕获和用户友好的错误信息
+
+**重要约束**：
+- ❌ 禁止添加任何 `require()` 第三方模块
+- ❌ 禁止使用 `import` 外部包
+- ✅ 只允许使用 Node.js 核心模块（如 `require('fs')`、`require('path')` 等）
+- ✅ 允许引用同目录下的 `common.js` 工具函数
+
+### 5. 通用脚本文件
+- `common.js` - 包含共享的实用函数，如 `getRepoRoot()`, `getFeaturePaths()` 等
+- 其他脚本通过 `require('./common')` 引用共享函数
 
 ## 项目宪法规范
 
@@ -129,3 +163,43 @@ scripts:
 - 修正流程
 - 质量保证
 ```
+
+## 添加新模板指南
+
+### 1. 创建新模板
+当需要添加新的模板类型时，请遵循以下步骤：
+
+1. **确保目录结构完整**
+   ```bash
+   mkdir -p new-template/{commands,scripts,memory}
+   ```
+
+2. **创建必需的命令文件**
+   - 至少包含基础命令： `specify.md`, `plan.md`, `tasks.md`
+   - 根据模板特性添加专用命令
+
+3. **提供配套脚本**
+   - 为每个命令提供对应的 Node.js 脚本
+   - 使用 Node.js 内置模块确保跨平台兼容性
+
+4. **编写项目宪法**
+   - 根据项目类型定制 `constitution.md`
+   - 包含项目特定的约束和原则
+
+### 2. 模板质量检查清单
+- [ ] 目录结构符合标准规范
+- [ ] 所有命令文件包含完整的 Front Matter
+- [ ] Node.js 脚本仅使用内置模块实现（禁用第三方依赖）
+- [ ] 脚本支持 `--json` 参数输出
+- [ ] 脚本具备跨平台兼容性
+- [ ] 脚本代码审查：确认无 `require()` 第三方包
+- [ ] 模板文档使用占位符格式
+- [ ] 项目宪法针对项目类型定制
+- [ ] README.md 包含模板使用说明
+
+### 3. 模板测试验证
+在提交新模板前，请执行以下验证：
+- 使用 `rod init --template <template-name>` 测试初始化
+- 验证生成的项目结构正确
+- 测试命令脚本的执行
+- 确认文档模板的可用性

@@ -1,8 +1,7 @@
 ---
 description: 基于模块设计文档生成可执行的开发任务清单，支持TDD和并行开发
 scripts:
-  sh: .specify/scripts/bash/generate-module-tasks.sh --json
-  ps: .specify/scripts/powershell/generate-module-tasks.ps1 -Json
+  node: node .specify/scripts/generate-module-tasks.js --json
 ---
 
 在当前模块目录中基于设计文档生成详细的开发任务清单，为实际编码提供清晰的执行路径。
