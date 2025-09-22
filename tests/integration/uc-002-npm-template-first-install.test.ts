@@ -8,7 +8,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { NPMTemplateManager, createNPMTemplateManager } from '@/lib/npm-template-manager';
-import { LocalTemplateGenerator, createLocalTemplateGenerator } from '@/lib/local-template-generator';
+import { LocalTemplateGenerator, createLocalTemplateGenerator } from '@/lib/template-generator';
 import { AIAssistant, ScriptType, WorkflowMode } from '@/types/cli-config';
 
 describe('UC-002: NPM Template First-time Installation', () => {

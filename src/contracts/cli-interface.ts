@@ -111,7 +111,7 @@ export const CLI_COMMANDS: CLICommand[] = [
         default: false
       }
     ],
-    handler: async (_args: InitCommandArgs) => {
+    handler: async () => {
       // Implementation contract - must be fulfilled
       throw new Error('Not implemented');
     }
@@ -127,7 +127,7 @@ export const CLI_COMMANDS: CLICommand[] = [
         default: false
       }
     ],
-    handler: async (_args: CheckCommandArgs) => {
+    handler: async () => {
       // Implementation contract - must be fulfilled
       throw new Error('Not implemented');
     }

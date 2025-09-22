@@ -8,7 +8,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import os from 'os';
 import { execSync } from 'child_process';
-import { LocalTemplateGenerator, TemplateGenerationConfig } from '../../src/lib/local-template-generator';
+import { LocalTemplateGenerator, TemplateGenerationConfig } from '../../src/lib/template-generator';
 import { NPMTemplateManager } from '../../src/lib/npm-template-manager';
 import { AIAssistant, ScriptType, WorkflowMode } from '../../src/types/cli-config';
 

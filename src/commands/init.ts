@@ -9,7 +9,7 @@ import path from 'path';
 import { InitCommandArgs } from '../contracts/cli-interface';
 import { CLIConfig, AIAssistant, ScriptType, WorkflowMode } from '../types/cli-config';
 import { ConfigManager } from '../lib/config-manager';
-import { LocalTemplateGenerator, TemplateGenerationConfig } from '../lib/local-template-generator';
+import { LocalTemplateGenerator, TemplateGenerationConfig } from '../lib/template-generator';
 import { ToolChecker } from '../lib/tool-checker';
 
 export class InitCommand {
