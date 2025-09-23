@@ -1,6 +1,6 @@
 {
   "name": "rod-cli",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "ROD CLI - Rule-Oriented Development toolkit for specification-driven development",
   "main": "dist/cli.js",
   "bin": {
