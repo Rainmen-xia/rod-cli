@@ -214,26 +214,31 @@ export class BaseFileProcessor {
    * Copy base template files to .specify/templates directory
    */
   async copyBaseTemplates(templatesDir: string, filesCreated: string[]): Promise<void> {
-    // Copy template files directly from template directory (not commands subdirectory)
-    const templateFiles = [
-      'roadmap-template.md',
-      'spec-template.md',
-      'plan-template.md',
-      'tasks-template.md'
-    ];
+    // Copy template files from templates/templates subdirectory (unified structure)
+    const baseTemplatesDir = path.join(this.templateBasePath, 'templates');
 
     await fs.mkdir(templatesDir, { recursive: true });
 
-    for (const templateFile of templateFiles) {
-      const sourcePath = path.join(this.templateBasePath, templateFile);
-      const destPath = path.join(templatesDir, templateFile);
+    try {
+      // Check if templates subdirectory exists
+      await fs.access(baseTemplatesDir);
 
-      try {
-        await fs.copyFile(sourcePath, destPath);
-        filesCreated.push(destPath);
-      } catch {
-        // Template file doesn't exist, which is fine - skip it
+      const templateFiles = await fs.readdir(baseTemplatesDir);
+
+      for (const templateFile of templateFiles) {
+        const sourcePath = path.join(baseTemplatesDir, templateFile);
+        const destPath = path.join(templatesDir, templateFile);
+
+        const stat = await fs.stat(sourcePath);
+        if (stat.isFile() && templateFile.endsWith('.md')) {
+          await fs.copyFile(sourcePath, destPath);
+          filesCreated.push(destPath);
+        }
       }
+    } catch {
+      // Templates subdirectory doesn't exist - this shouldn't happen with the new structure
+      // but keep as fallback for compatibility
+      console.warn('Warning: templates/templates directory not found, no base templates copied');
     }
   }
 

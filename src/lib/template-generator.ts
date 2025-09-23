@@ -235,9 +235,9 @@ export class LocalTemplateGenerator {
     const specifyDir = path.join(config.projectPath, '.specify');
     await fs.mkdir(specifyDir, { recursive: true });
 
-    // Copy template-specific commands to templates directory
+    // Copy template-specific templates to templates directory
     const templatesDir = path.join(specifyDir, 'templates');
-    await this.copyInternalTemplateCommands(templatePath, templatesDir, filesCreated);
+    await this.copyInternalTemplateFiles(templatePath, templatesDir, filesCreated);
 
     // Copy scripts (from internal template if exists, otherwise from default)
     await this.copyInternalScripts(config, templatePath, filesCreated);
@@ -247,29 +247,32 @@ export class LocalTemplateGenerator {
   }
 
   /**
-   * Copy internal template commands to .specify/templates
+   * Copy internal template templates to .specify/templates
    */
-  private async copyInternalTemplateCommands(templatePath: string, templatesDir: string, filesCreated: string[]): Promise<void> {
-    const commandsSourceDir = path.join(templatePath, 'commands');
+  private async copyInternalTemplateFiles(templatePath: string, templatesDir: string, filesCreated: string[]): Promise<void> {
+    const templatesSourceDir = path.join(templatePath, 'templates');
+
+    await fs.mkdir(templatesDir, { recursive: true });
 
     try {
-      await fs.access(commandsSourceDir);
-      await fs.mkdir(templatesDir, { recursive: true });
+      // Try to use internal template's own templates directory
+      await fs.access(templatesSourceDir);
 
-      const commandFiles = await fs.readdir(commandsSourceDir);
+      const templateFiles = await fs.readdir(templatesSourceDir);
 
-      for (const commandFile of commandFiles) {
-        const sourcePath = path.join(commandsSourceDir, commandFile);
-        const destPath = path.join(templatesDir, commandFile);
+      for (const templateFile of templateFiles) {
+        const sourcePath = path.join(templatesSourceDir, templateFile);
 
         const stat = await fs.stat(sourcePath);
-        if (stat.isFile()) {
+        if (stat.isFile() && templateFile.endsWith('.md')) {
+          const destPath = path.join(templatesDir, templateFile);
           await fs.copyFile(sourcePath, destPath);
           filesCreated.push(destPath);
         }
       }
     } catch {
-      // Commands directory doesn't exist in template, use default templates
+      // If templates directory doesn't exist, use default templates
+      // Do NOT convert commands to templates - they serve different purposes
       await this.fileProcessor.copyBaseTemplates(templatesDir, filesCreated);
     }
   }
