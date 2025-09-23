@@ -138,8 +138,7 @@ my-project/
 ## 📚 相关文档
 
 - **[详细工作流程说明](./WORKFLOW.md)** - 完整的 ROD 规范驱动开发方法论
-- **[创建新工作流指导](./CREATE-WORKFLOW.md)** - 如何创建自定义工作流模板
-- **[模板技术规范](./TEMPLATE-SPECIFICATIONS.md)** - 模板开发的技术标准和规范
+- **[工作流模板开发手册](./CREATE-WORKFLOW.md)** - 如何创建自定义工作流模板，包含完整的技术规范
 
 ---
 
