@@ -173,14 +173,6 @@ workflow-template/
 └── README.md            # 模板说明（必需）
 ```
 
-### 可选目录结构
-```
-workflow-template/
-├── rules/                # 规则文件（可选）
-├── docs/                 # 附加文档（可选）
-└── examples/             # 示例文件（可选）
-```
-
 ## 质量标准
 
 ### 命令文件质量要求

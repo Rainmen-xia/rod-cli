@@ -62,7 +62,7 @@ your-workflow-template/
 │   ├── spec-template.md     # 定制化的规范模板
 │   ├── plan-template.md     # 定制化的设计模板
 │   ├── tasks-template.md    # 定制化的任务模板
-│   └── workflow.md          # 复制工作流程定义
+│   └── roadmap-template.md  # 项目路线图模板
 ├── scripts/                 # 自动化脚本（可选）
 │   ├── common.js           # 通用工具函数
 │   ├── analyze-modules.js   # 定制化的分析脚本
