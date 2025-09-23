@@ -28,8 +28,7 @@ export interface CLIArgs {
 export interface InitCommandArgs extends CLIArgs {
   projectName?: string;
   ai?: 'claude' | 'copilot' | 'gemini' | 'cursor' | 'codebuddy';
-  script?: 'sh' | 'ps';
-  workflow?: 'legacy' | 'roadmap';
+  script?: 'node';
   template?: string; // Template name for internal templates
   here?: boolean;
   noGit?: boolean;

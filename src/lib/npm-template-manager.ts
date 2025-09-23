@@ -76,10 +76,27 @@ export class NPMTemplateManager {
 
   /**
    * Get the path for a specific template in global package
+   * In development mode, fallback to local packages/internal-templates
    */
   async getTemplatePath(templateName: string): Promise<string> {
-    const globalNodeModules = await this.getGlobalNodeModulesPath();
-    return path.join(globalNodeModules, '@tencent/rod-cli-templates', templateName);
+    // First try NPM template path if available
+    try {
+      const globalNodeModules = await this.getGlobalNodeModulesPath();
+      const npmTemplatePath = path.join(globalNodeModules, '@tencent/rod-cli-templates', templateName);
+
+      // Check if NPM template exists
+      await fs.access(npmTemplatePath);
+      return npmTemplatePath;
+    } catch (npmError) {
+      // NPM template not found, try local development templates
+      try {
+        const packageRoot = path.join(__dirname, '../../packages/internal-templates', templateName);
+        await fs.access(packageRoot);
+        return packageRoot;
+      } catch (localError) {
+        throw new Error(`Template '${templateName}' not found in either NPM package or local development directory.\nNPM error: ${(npmError as Error).message}\nLocal error: ${(localError as Error).message}`);
+      }
+    }
   }
 
   /**
@@ -164,10 +181,12 @@ export class NPMTemplateManager {
    * Get list of available templates in the global package
    */
   async getAvailableTemplates(): Promise<string[]> {
+    const templates: string[] = [];
+
     try {
+      // First try NPM templates
       const packagePath = await this.getTemplatePackagePath();
       const entries = await fs.readdir(packagePath);
-      const templates: string[] = [];
 
       for (const entry of entries) {
         const entryPath = path.join(packagePath, entry);
@@ -177,11 +196,25 @@ export class NPMTemplateManager {
           templates.push(entry);
         }
       }
-
-      return templates;
     } catch {
-      return [];
+      // NPM templates not available, try local development templates
+      try {
+        const localTemplatesPath = path.join(__dirname, '../../packages/internal-templates');
+        const entries = await fs.readdir(localTemplatesPath);
+
+        for (const entry of entries) {
+          const entryPath = path.join(localTemplatesPath, entry);
+          const stat = await fs.stat(entryPath);
+          if (stat.isDirectory() && !entry.startsWith('.') && entry !== 'node_modules') {
+            templates.push(entry);
+          }
+        }
+      } catch {
+        // Neither NPM nor local templates available
+      }
     }
+
+    return templates;
   }
 
   /**

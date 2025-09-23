@@ -12,7 +12,6 @@ import {
   CLIConfig,
   AIAssistant,
   ScriptType,
-  WorkflowMode,
   CLIConfigBuilder,
   validateCLIConfig,
   ConfigValidationResult,
@@ -42,7 +41,6 @@ export interface ConfigProfile {
 export interface GlobalConfig {
   defaultAI?: AIAssistant;
   defaultScript?: ScriptType;
-  defaultWorkflow?: WorkflowMode;
   skipGitByDefault: boolean;
   debugMode: boolean;
   profiles: ConfigProfile[];
@@ -86,7 +84,6 @@ export class ConfigManager {
     if (defaults.aiAssistant) builder.setAIAssistant(defaults.aiAssistant);
     if (defaults.scriptType) builder.setScriptType(defaults.scriptType);
     else builder.setScriptType(this.autoDetectScriptType()); // Auto-detect if not set
-    if (defaults.workflowMode) builder.setWorkflowMode(defaults.workflowMode);
     builder.setSkipGit(defaults.skipGit || false);
     builder.setDebug(defaults.debug || false);
     builder.setSkipTls(false);
@@ -108,14 +105,6 @@ export class ConfigManager {
       builder.setScriptType(this.autoDetectScriptType());
     }
     
-    if (partialConfig.workflowMode) {
-      builder.setWorkflowMode(partialConfig.workflowMode);
-      
-      // In roadmap mode, always auto-detect script type for simplicity
-      if (partialConfig.workflowMode === WorkflowMode.ROADMAP && !partialConfig.scriptType) {
-        builder.setScriptType(this.autoDetectScriptType());
-      }
-    }
     
     if (partialConfig.projectPath) {
       builder.setProjectPath(partialConfig.projectPath);
@@ -167,8 +156,8 @@ export class ConfigManager {
    */
   autoDetectScriptType(): ScriptType {
     // Auto-detect based on platform
-    // Windows: PowerShell, Others (macOS, Linux): Bash
-    return process.platform === 'win32' ? ScriptType.POWERSHELL : ScriptType.BASH;
+    // Use Node.js scripts by default for all platforms
+    return ScriptType.NODE;
   }
 
   /**
@@ -406,7 +395,6 @@ export class ConfigManager {
     return {
       aiAssistant: this.globalConfig.defaultAI,
       scriptType: this.globalConfig.defaultScript,
-      workflowMode: this.globalConfig.defaultWorkflow,
       skipGit: this.globalConfig.skipGitByDefault,
       debug: this.globalConfig.debugMode,
       skipTls: false,

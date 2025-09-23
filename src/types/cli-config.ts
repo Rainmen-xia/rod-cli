@@ -13,25 +13,17 @@ export enum AIAssistant {
   CODEBUDDY = 'codebuddy'
 }
 
-// Script Type Enumeration
+// Script Type Enumeration (Node.js only)
 export enum ScriptType {
-  BASH = 'sh',
-  POWERSHELL = 'ps'
-}
-
-// Workflow Mode Enumeration
-export enum WorkflowMode {
-  LEGACY = 'legacy',    // Original branch-based workflow (001-feature-name)
-  ROADMAP = 'roadmap'   // New module-based workflow (roadmap driven)
+  NODE = 'node'
 }
 
 // Main CLI Configuration Interface
 export interface CLIConfig {
   projectName: string;           // Project name
   aiAssistant: AIAssistant;      // Selected AI assistant
-  scriptType: ScriptType;        // Script type
+  scriptType: ScriptType;        // Script type (Node.js only)
   projectPath: string;           // Project path (absolute)
-  workflowMode: WorkflowMode;    // Workflow mode (legacy or roadmap)
   skipGit: boolean;              // Skip git initialization
   skipTls: boolean;              // Skip TLS verification
   ignoreAgentTools: boolean;     // Ignore agent tool checks
@@ -48,7 +40,7 @@ export interface ConfigValidationResult {
 // Configuration builder for easier creation
 export class CLIConfigBuilder {
   private config: Partial<CLIConfig> = {
-    workflowMode: WorkflowMode.ROADMAP,  // Default to roadmap mode
+    scriptType: ScriptType.NODE,  // Default to Node.js scripts
     skipGit: false,
     skipTls: false,
     ignoreAgentTools: false,
@@ -95,10 +87,6 @@ export class CLIConfigBuilder {
     return this;
   }
 
-  setWorkflowMode(mode: WorkflowMode): CLIConfigBuilder {
-    this.config.workflowMode = mode;
-    return this;
-  }
 
   build(): CLIConfig {
     const validation = validateCLIConfig(this.config as CLIConfig);
@@ -133,12 +121,6 @@ export function validateCLIConfig(config: Partial<CLIConfig>): ConfigValidationR
     errors.push(`Invalid script type: ${config.scriptType}`);
   }
 
-  // Validate workflow mode
-  if (!config.workflowMode) {
-    warnings.push('Workflow mode not specified, defaulting to roadmap mode');
-  } else if (!Object.values(WorkflowMode).includes(config.workflowMode)) {
-    errors.push(`Invalid workflow mode: ${config.workflowMode}`);
-  }
 
   // Validate project path
   if (!config.projectPath) {
@@ -183,14 +165,11 @@ export function getSupportedScriptTypes(): ScriptType[] {
   return Object.values(ScriptType);
 }
 
-export function getSupportedWorkflowModes(): WorkflowMode[] {
-  return Object.values(WorkflowMode);
-}
 
 // Default configuration factory
 export function createDefaultConfig(): Partial<CLIConfig> {
   return {
-    workflowMode: WorkflowMode.ROADMAP,
+    scriptType: ScriptType.NODE,
     skipGit: false,
     skipTls: false,
     ignoreAgentTools: false,
@@ -206,7 +185,6 @@ export class ConfigUtils {
       aiAssistant: args.ai as AIAssistant,
       scriptType: args.script as ScriptType,
       projectPath: args.projectPath,
-      workflowMode: args.workflow as WorkflowMode || WorkflowMode.ROADMAP,
       skipGit: Boolean(args.noGit),
       skipTls: Boolean(args.skipTls),
       ignoreAgentTools: Boolean(args.ignoreAgentTools),
@@ -219,7 +197,6 @@ export class ConfigUtils {
       `Project: ${config.projectName}`,
       `AI Assistant: ${config.aiAssistant}`,
       `Script Type: ${config.scriptType}`,
-      `Workflow Mode: ${config.workflowMode}`,
       `Path: ${config.projectPath}`,
       `Skip Git: ${config.skipGit}`,
       `Debug: ${config.debug}`

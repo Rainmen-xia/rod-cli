@@ -18,7 +18,7 @@ import {
   validateInitArgs
 } from './commands/init';
 import { ExitCode } from './contracts/cli-interface';
-import { AIAssistant, ScriptType, WorkflowMode } from './types/cli-config';
+import { AIAssistant, ScriptType } from './types/cli-config';
 
 // Package information
 const packageInfo = require('../package.json');
@@ -67,7 +67,6 @@ program
         projectName,
         ai: options.ai as AIAssistant,
         script: undefined, // Always auto-detect
-        workflow: undefined, // Always use roadmap
         template: options.template,
         here: !projectName, // If no project name, use current directory
         noGit: !options.git, // Commander negates no-git to git
@@ -182,13 +181,6 @@ function validateScriptType(value: string): ScriptType {
   return value as ScriptType;
 }
 
-function validateWorkflowMode(value: string): WorkflowMode {
-  const validValues = Object.values(WorkflowMode);
-  if (!validValues.includes(value as WorkflowMode)) {
-    throw new Error(`Invalid workflow mode '${value}'. Valid options: ${validValues.join(', ')}`);
-  }
-  return value as WorkflowMode;
-}
 
 // Handle no command provided
 if (process.argv.length <= 2) {

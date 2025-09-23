@@ -4,7 +4,7 @@
  * Common utility functions shared across template generators
  */
 
-import { AIAssistant, ScriptType, WorkflowMode } from '../../types/cli-config';
+import { AIAssistant, ScriptType } from '../../types/cli-config';
 
 /**
  * Generate roadmap workflow files
@@ -103,7 +103,6 @@ export async function calculateTotalSize(filesCreated: string[]): Promise<{ tota
 export function validateConfig(config: {
   aiAssistant: AIAssistant;
   scriptType: ScriptType;
-  workflowMode: WorkflowMode;
   projectPath: string;
   projectName: string;
   templateName?: string;
@@ -114,10 +113,6 @@ export function validateConfig(config: {
 
   if (!config.scriptType) {
     throw new Error('Script type is required');
-  }
-
-  if (!config.workflowMode) {
-    throw new Error('Workflow mode is required');
   }
 
   if (!config.projectPath) {
@@ -135,9 +130,5 @@ export function validateConfig(config: {
 
   if (!Object.values(ScriptType).includes(config.scriptType)) {
     throw new Error(`Invalid script type: ${config.scriptType}`);
-  }
-
-  if (!Object.values(WorkflowMode).includes(config.workflowMode)) {
-    throw new Error(`Invalid workflow mode: ${config.workflowMode}`);
   }
 }

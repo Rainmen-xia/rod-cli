@@ -106,8 +106,8 @@ export abstract class BaseAIProcessor {
    * Replace script type placeholder with actual script extension
    */
   protected replaceScriptPlaceholder(content: string, scriptType: ScriptType): string {
-    const scriptExt = scriptType === ScriptType.BASH ? 'sh' : 'ps1';
-    return content.replace(/\{\{SCRIPT_EXT\}\}/g, scriptExt);
+    // Always use Node.js scripts (.js extension)
+    return content.replace(/\{\{SCRIPT_EXT\}\}/g, 'js');
   }
 
   /**

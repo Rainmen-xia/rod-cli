@@ -7,7 +7,7 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
-import { AIAssistant, ScriptType, WorkflowMode } from '../types/cli-config';
+import { AIAssistant, ScriptType } from '../types/cli-config';
 import { NPMTemplateManager, createNPMTemplateManager } from './npm-template-manager';
 import { BaseFileProcessor } from './template-generator/base-file-processor';
 import { AIProcessorFactory } from './template-generator/ai-processors';
@@ -16,7 +16,6 @@ import { validateConfig, calculateTotalSize, generateRoadmapWorkflow } from './t
 export interface TemplateGenerationConfig {
   aiAssistant: AIAssistant;
   scriptType: ScriptType;
-  workflowMode: WorkflowMode;
   projectPath: string;
   projectName: string;
   templateName?: string; // Optional template name for internal templates
@@ -216,15 +215,13 @@ export class LocalTemplateGenerator {
     // 2. Generate AI-specific files
     await this.generateAISpecificFiles(config, filesCreated);
 
-    // 3. Generate workflow-specific content based on mode
-    if (config.workflowMode === WorkflowMode.ROADMAP) {
-      await generateRoadmapWorkflow(
-        config.projectPath,
-        config.projectName,
-        this.templateBasePath,
-        filesCreated
-      );
-    }
+    // 3. Generate roadmap workflow content
+    await generateRoadmapWorkflow(
+      config.projectPath,
+      config.projectName,
+      this.templateBasePath,
+      filesCreated
+    );
   }
 
   /**
@@ -285,15 +282,18 @@ export class LocalTemplateGenerator {
 
     try {
       await fs.access(internalScriptsDir);
+
       // Internal template has scripts, use them
       const scriptsDestDir = path.join(config.projectPath, '.specify', 'scripts');
-      const scriptSubdir = config.scriptType === ScriptType.BASH ? 'bash' : 'powershell';
-      const sourceDir = path.join(internalScriptsDir, scriptSubdir);
-      const destDir = path.join(scriptsDestDir, scriptSubdir);
+
+      // For Node.js scripts, copy directly from scripts directory (no subdirectory)
+      const sourceDir = internalScriptsDir;
+      const destDir = scriptsDestDir;
 
       await fs.mkdir(destDir, { recursive: true });
 
       const scriptFiles = await fs.readdir(sourceDir);
+
       for (const scriptFile of scriptFiles) {
         const sourcePath = path.join(sourceDir, scriptFile);
         const destPath = path.join(destDir, scriptFile);
@@ -301,12 +301,12 @@ export class LocalTemplateGenerator {
         await fs.copyFile(sourcePath, destPath);
         filesCreated.push(destPath);
 
-        // Set executable permissions for bash scripts on Unix systems
-        if (config.scriptType === ScriptType.BASH && process.platform !== 'win32') {
+        // Set executable permissions for Node.js scripts on Unix systems
+        if (scriptFile.endsWith('.js') && process.platform !== 'win32') {
           await fs.chmod(destPath, 0o755);
         }
       }
-    } catch {
+    } catch (error) {
       // Internal template doesn't have scripts, use default
       await this.fileProcessor.copyScripts(config, filesCreated);
     }

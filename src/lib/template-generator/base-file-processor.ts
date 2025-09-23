@@ -160,10 +160,9 @@ export class BaseFileProcessor {
     // Scripts always go in .specify directory
     const scriptsDestDir = path.join(config.projectPath, '.specify', 'scripts');
 
-    // Copy the selected script type
-    const scriptSubdir = config.scriptType === ScriptType.BASH ? 'bash' : 'powershell';
-    const sourceDir = path.join(scriptsSourceDir, scriptSubdir);
-    const destDir = path.join(scriptsDestDir, scriptSubdir);
+    // For Node.js scripts, copy directly from scripts directory (no subdirectory)
+    const sourceDir = scriptsSourceDir;
+    const destDir = scriptsDestDir;
 
     await fs.mkdir(destDir, { recursive: true });
 
@@ -176,8 +175,8 @@ export class BaseFileProcessor {
       await fs.copyFile(sourcePath, destPath);
       filesCreated.push(destPath);
 
-      // Set executable permissions for bash scripts on Unix systems
-      if (config.scriptType === ScriptType.BASH && process.platform !== 'win32') {
+      // Set executable permissions for Node.js scripts on Unix systems
+      if (scriptFile.endsWith('.js') && process.platform !== 'win32') {
         await fs.chmod(destPath, 0o755);
       }
     }

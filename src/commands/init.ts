@@ -7,7 +7,7 @@
 import chalk from 'chalk';
 import path from 'path';
 import { InitCommandArgs } from '../contracts/cli-interface';
-import { CLIConfig, AIAssistant, ScriptType, WorkflowMode } from '../types/cli-config';
+import { CLIConfig, AIAssistant, ScriptType } from '../types/cli-config';
 import { ConfigManager } from '../lib/config-manager';
 import { LocalTemplateGenerator, TemplateGenerationConfig } from '../lib/template-generator';
 import { ToolChecker } from '../lib/tool-checker';
@@ -49,7 +49,6 @@ export class InitCommand {
       const templateConfig: TemplateGenerationConfig = {
         aiAssistant: config.aiAssistant,
         scriptType: config.scriptType,
-        workflowMode: config.workflowMode,
         projectPath: config.projectPath,
         projectName: config.projectName,
         templateName: args.template
@@ -116,7 +115,6 @@ export class InitCommand {
       projectName,
       ai: args.ai,
       script: args.script,
-      workflow: args.workflow,
       projectPath: this.resolveProjectPath(projectName, args.here),
       noGit: args.noGit,
       skipTls: args.skipTls,
@@ -238,10 +236,6 @@ export async function validateInitArgs(args: InitCommandArgs): Promise<string[]>
     errors.push(`Invalid script type: ${args.script}. Valid options: ${Object.values(ScriptType).join(', ')}`);
   }
 
-  // Validate workflow mode
-  if (args.workflow && !Object.values(WorkflowMode).includes(args.workflow as WorkflowMode)) {
-    errors.push(`Invalid workflow mode: ${args.workflow}. Valid options: ${Object.values(WorkflowMode).join(', ')}`);
-  }
 
   // No validation needed for project name - if not provided, uses current directory
 
@@ -266,7 +260,7 @@ Options:
 
 Notes:
   • If no project name is provided, initializes in the current directory
-  • Script type (bash/powershell) is automatically detected based on your platform
+  • Uses Node.js scripts for all platforms (requires Node.js >= 18)
   • Always uses the roadmap workflow (module → spec → design → todo → sync)
   • Template option supports both local and NPM packages from internal registry
 
