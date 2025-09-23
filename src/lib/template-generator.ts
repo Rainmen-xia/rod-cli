@@ -37,8 +37,8 @@ export class LocalTemplateGenerator {
   private readonly fileProcessor: BaseFileProcessor;
 
   constructor(packageRoot?: string, npmRegistry?: string) {
-    // Templates are stored in the npm package under templates/
-    this.templateBasePath = packageRoot || path.join(__dirname, '../../templates');
+    // Templates are stored in the npm package under workflow/
+    this.templateBasePath = packageRoot || path.join(__dirname, '../../workflow');
     // Internal templates path (updated structure) - for backward compatibility
     this.internalTemplatePath = path.join(__dirname, '../../packages/internal-templates');
     // NPM template manager for dynamic template installation

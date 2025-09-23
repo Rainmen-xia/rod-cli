@@ -214,8 +214,8 @@ export class BaseFileProcessor {
    * Copy base template files to .specify/templates directory
    */
   async copyBaseTemplates(templatesDir: string, filesCreated: string[]): Promise<void> {
-    // Copy template files from templates/templates subdirectory (unified structure)
-    const baseTemplatesDir = path.join(this.templateBasePath, 'templates');
+    // Copy template files from workflow/command-templates subdirectory (unified structure)
+    const baseTemplatesDir = path.join(this.templateBasePath, 'command-templates');
 
     await fs.mkdir(templatesDir, { recursive: true });
 
@@ -236,9 +236,9 @@ export class BaseFileProcessor {
         }
       }
     } catch {
-      // Templates subdirectory doesn't exist - this shouldn't happen with the new structure
+      // Command templates subdirectory doesn't exist - this shouldn't happen with the new structure
       // but keep as fallback for compatibility
-      console.warn('Warning: templates/templates directory not found, no base templates copied');
+      console.warn('Warning: workflow/command-templates directory not found, no base templates copied');
     }
   }
 
