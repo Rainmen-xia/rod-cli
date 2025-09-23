@@ -199,14 +199,14 @@ ${bodyContent}
   }
 
   /**
-   * Rewrite paths to use .specify directory
+   * Rewrite paths to use .rod directory
    */
   protected rewritePaths(content: string): string {
-    // Rewrite paths to point to .specify directory
-    content = content.replace(/specs\//g, '.specify/templates/');
-    content = content.replace(/templates\//g, '.specify/templates/');
-    content = content.replace(/scripts\//g, '.specify/scripts/');
-    content = content.replace(/memory\//g, '.specify/memory/');
+    // Rewrite paths to point to .rod directory
+    content = content.replace(/specs\//g, '.rod/spec-templates/');
+    content = content.replace(/templates\//g, '.rod/spec-templates/');
+    content = content.replace(/scripts\//g, '.rod/scripts/');
+    content = content.replace(/memory\//g, '.rod/memory/');
 
     return content;
   }

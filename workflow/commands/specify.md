@@ -1,7 +1,7 @@
 ---
 description: 在模块目录中创建详细的功能规范，沉淀业务需求和验收标准
 scripts:
-  node: node .specify/scripts/create-module-spec.js --json {ARGS}
+  node: node .rod/scripts/create-module-spec.js --json {ARGS}
 ---
 
 在当前模块目录中创建功能规范文档，为后续的plan和tasks阶段提供明确的需求基础。
@@ -13,7 +13,7 @@ scripts:
 1. 运行 `{SCRIPT}` 获取当前模块路径和上下文信息，解析MODULE_PATH和SPEC_FILE路径
 2. 检查当前是否在有效的模块目录中（specs/modules/xxx/）
 3. 如果不在模块目录，提示用户先执行 `/module` 或进入模块目录
-4. 加载 `.specify/templates/spec-template.md` 了解规范的章节结构
+4. 加载 `.rod/spec-templates/spec-template.md` 了解规范的章节结构
 5. 基于用户提供的功能描述创建详细的需求规范：
    - 使用模板结构，替换占位符为实际内容
    - 生成符合EARS格式的需求条目

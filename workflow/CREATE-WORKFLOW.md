@@ -58,7 +58,7 @@ your-workflow-template/
 │   ├── command2.md          # 对应工作流阶段 2
 │   ├── command3.md          # 对应工作流阶段 3
 │   └── ...                  # 其他阶段命令
-├── templates/               # 文档模板（推荐）
+├── spec-templates/         # 辅助commands生成指定的spec文档（推荐）
 │   ├── spec-template.md     # 定制化的规范模板
 │   ├── plan-template.md     # 定制化的设计模板
 │   ├── tasks-template.md    # 定制化的任务模板
@@ -81,7 +81,7 @@ your-workflow-template/
 ---
 description: 命令的功能描述，对应 workflow.md 中的阶段说明
 scripts:
-  node: node .specify/scripts/your-script.js --json {ARGS}
+  node: node .rod/scripts/your-script.js --json {ARGS}
 ---
 
 [从 workflow.md 中复制该阶段的详细描述]
@@ -92,7 +92,7 @@ scripts:
    - 验证上一阶段的输出
 
 2. **加载模板**（如适用）
-   - 加载 `.specify/templates/xxx-template.md`
+   - 加载 `.rod/spec-templates/xxx-template.md`
    - 基于工作流特点调整模板内容
 
 3. **执行核心逻辑**
@@ -208,7 +208,7 @@ module.exports = { main };
 3. **验证生成结果**
    ```bash
    cd test-your-template
-   # 检查 .specify/ 目录结构
+   # 检查 .rod/ 目录结构
    # 验证 AI 命令是否正确生成
    # 测试 workflow.md 是否被正确复制
    ```
@@ -219,7 +219,7 @@ module.exports = { main };
 - [ ] 目录结构符合 ROD 规范要求
 - [ ] 所有 AI 命令文件包含完整的 Front Matter
 - [ ] 命令实现与 workflow.md 中的阶段定义一致
-- [ ] 生成的项目包含正确的 `.specify/` 目录结构
+- [ ] 生成的项目包含正确的 `.rod/` 目录结构
 - [ ] 文档模板体现工作流的特色和要求
 - [ ] 脚本使用 Node.js 内置模块，无外部依赖
 - [ ] 本地测试生成正确的项目结构

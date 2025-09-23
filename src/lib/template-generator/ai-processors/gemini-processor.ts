@@ -51,17 +51,17 @@ export class GeminiProcessor extends BaseAIProcessor {
         "严格按照ROD(Rule-Oriented Development)方法论工作",
         "始终基于项目规格文件进行开发",
         "确保代码实现与规格文档的一致性",
-        "使用.specify目录中的模板和工具",
+        "使用.rod目录中的模板和工具",
         "遵循项目的代码规范和架构设计"
       ],
       templates: {
-        directory: ".specify/templates"
+        directory: ".rod/spec-templates"
       },
       scripts: {
-        directory: ".specify/scripts"
+        directory: ".rod/scripts"
       },
       memory: {
-        directory: ".specify/memory"
+        directory: ".rod/memory"
       },
       gemini: {
         model: "gemini-pro",

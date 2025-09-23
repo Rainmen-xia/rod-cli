@@ -19,7 +19,7 @@
 ---
 description: 命令的简短描述，说明其主要功能
 scripts:
-  node: node .specify/scripts/script-name.js --json {ARGS}
+  node: node .rod/scripts/script-name.js --json {ARGS}
 ---
 ```
 
@@ -49,7 +49,7 @@ scripts:
 ```
 
 ### 3. 脚本引用规范
-- 脚本路径使用相对路径 `.specify/scripts/`
+- 脚本路径使用相对路径 `.rod/scripts/`
 - 使用 Node.js (`node`) 统一脚本执行环境
 - 参数传递使用 `{ARGS}` 占位符
 - 依赖 Node.js 内置模块，无需额外依赖
@@ -57,7 +57,7 @@ scripts:
 ## 文档模板说明
 
 ### templates/ 目录结构
-默认工作流提供四个核心文档模板，位于 `workflow/command-templates/` 目录：
+默认工作流提供四个核心文档模板，位于 `workflow/spec-templates/` 目录：
 
 #### 1. `spec-template.md` - 功能规范模板
 - **用途**: 定义功能的业务需求和验收标准
@@ -169,7 +169,7 @@ workflow-template/
 ├── commands/              # AI 助手命令（必需）
 ├── scripts/              # Node.js 自动化脚本（推荐）
 ├── memory/               # 项目宪法（推荐）
-├── command-templates/            #  用于给commands生成spec的模板（推荐）
+├── spec-templates/              #  用于给commands生成spec的模板（推荐）
 └── README.md            # 模板说明（必需）
 ```
 

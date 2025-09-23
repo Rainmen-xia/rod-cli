@@ -1,7 +1,7 @@
 ---
 description: 同步模块开发进度到项目路线图，提供整体项目的进度可视化和管理
 scripts:
-  node: node .specify/scripts/sync-progress.js --json
+  node: node .rod/scripts/sync-progress.js --json
 ---
 
 同步当前模块的开发进度，更新项目整体路线图，为大型项目提供进度跟踪和管理支持。

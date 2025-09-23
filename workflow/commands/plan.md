@@ -1,7 +1,7 @@
 ---
 description: 基于模块需求规范执行技术设计规划，生成完整的实现方案和设计文档
 scripts:
-  node: node .specify/scripts/setup-module-plan.js --json
+  node: node .rod/scripts/setup-module-plan.js --json
 ---
 
 在当前模块目录中执行技术设计规划，基于spec.md生成完整的技术实现方案。
@@ -19,10 +19,10 @@ scripts:
    - 分析验收标准和约束条件
    - 了解与其他模块的依赖关系
 
-5. 读取项目宪法 `.specify/memory/constitution.md` 了解技术规范和约束
+5. 读取项目宪法 `.rod/memory/constitution.md` 了解技术规范和约束
 
 6. 执行模块化的实现规划：
-   - 加载 `.specify/templates/plan-template.md` 作为规划模板
+   - 加载 `.rod/spec-templates/plan-template.md` 作为规划模板
    - 设置输入为当前模块的spec.md
    - 执行完整的规划流程（Phase 0-2）
    - 在当前模块目录中生成设计文档：

@@ -22,7 +22,7 @@ export async function generateRoadmapWorkflow(
   await fs.mkdir(specsDir, { recursive: true });
 
   // Create initial roadmap from template
-  const roadmapSourcePath = path.join(templateBasePath, 'command-templates', 'roadmap-template.md');
+  const roadmapSourcePath = path.join(templateBasePath, 'spec-templates', 'roadmap-template.md');
   const roadmapDestPath = path.join(specsDir, 'roadmap.md');
 
   try {

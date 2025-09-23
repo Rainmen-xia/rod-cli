@@ -186,7 +186,7 @@ export class LocalTemplateGenerator {
       templatePath,
       config.projectPath,
       filesCreated,
-      ['commands', 'scripts', 'memory', 'templates', 'rules']
+      ['commands', 'scripts', 'memory', 'spec-templates', 'rules']
     );
 
     // Process template variables in copied files
@@ -198,8 +198,8 @@ export class LocalTemplateGenerator {
     // Copy .mcp.json if it exists in the template
     await this.fileProcessor.copyMCPConfig(templatePath, config.projectPath, filesCreated);
 
-    // Generate .specify directory with internal template specific content
-    await this.generateInternalTemplateSpecifyDirectory(config, templatePath, filesCreated);
+    // Generate .rod directory with internal template specific content
+    await this.generateInternalTemplateRODDirectory(config, templatePath, filesCreated);
 
     // Generate AI-specific files
     await this.generateAISpecificFiles(config, filesCreated, templatePath);
@@ -209,8 +209,8 @@ export class LocalTemplateGenerator {
    * Generate default template (existing behavior)
    */
   private async generateDefaultTemplate(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
-    // 1. Create .specify directory for common content
-    await this.fileProcessor.createSpecifyDirectory(config, filesCreated);
+    // 1. Create .rod directory for common content
+    await this.fileProcessor.createRODDirectory(config, filesCreated);
 
     // 2. Generate AI-specific files
     await this.generateAISpecificFiles(config, filesCreated);
@@ -225,32 +225,32 @@ export class LocalTemplateGenerator {
   }
 
   /**
-   * Generate .specify directory with internal template specific content
+   * Generate .rod directory with internal template specific content
    */
-  private async generateInternalTemplateSpecifyDirectory(
+  private async generateInternalTemplateRODDirectory(
     config: TemplateGenerationConfig,
     templatePath: string,
     filesCreated: string[]
   ): Promise<void> {
-    const specifyDir = path.join(config.projectPath, '.specify');
-    await fs.mkdir(specifyDir, { recursive: true });
+    const rodDir = path.join(config.projectPath, '.rod');
+    await fs.mkdir(rodDir, { recursive: true });
 
-    // Copy template-specific templates to templates directory
-    const templatesDir = path.join(specifyDir, 'templates');
+    // Copy template-specific templates to spec-templates directory
+    const templatesDir = path.join(rodDir, 'spec-templates');
     await this.copyInternalTemplateFiles(templatePath, templatesDir, filesCreated);
 
     // Copy scripts (from internal template if exists, otherwise from default)
     await this.copyInternalScripts(config, templatePath, filesCreated);
 
     // Copy memory files (from internal template if exists, otherwise from default)
-    await this.copyInternalMemoryFiles(templatePath, specifyDir, filesCreated);
+    await this.copyInternalMemoryFiles(templatePath, rodDir, filesCreated);
   }
 
   /**
-   * Copy internal template templates to .specify/templates
+   * Copy internal template templates to .rod/spec-templates
    */
   private async copyInternalTemplateFiles(templatePath: string, templatesDir: string, filesCreated: string[]): Promise<void> {
-    const templatesSourceDir = path.join(templatePath, 'templates');
+    const templatesSourceDir = path.join(templatePath, 'spec-templates');
 
     await fs.mkdir(templatesDir, { recursive: true });
 
@@ -271,7 +271,7 @@ export class LocalTemplateGenerator {
         }
       }
     } catch {
-      // If templates directory doesn't exist, use default templates
+      // If spec-templates directory doesn't exist, use default templates
       // Do NOT convert commands to templates - they serve different purposes
       await this.fileProcessor.copyBaseTemplates(templatesDir, filesCreated);
     }
@@ -287,7 +287,7 @@ export class LocalTemplateGenerator {
       await fs.access(internalScriptsDir);
 
       // Internal template has scripts, use them
-      const scriptsDestDir = path.join(config.projectPath, '.specify', 'scripts');
+      const scriptsDestDir = path.join(config.projectPath, '.rod', 'scripts');
 
       // For Node.js scripts, copy directly from scripts directory (no subdirectory)
       const sourceDir = internalScriptsDir;
@@ -318,9 +318,9 @@ export class LocalTemplateGenerator {
   /**
    * Copy memory files from internal template or default
    */
-  private async copyInternalMemoryFiles(templatePath: string, specifyDir: string, filesCreated: string[]): Promise<void> {
+  private async copyInternalMemoryFiles(templatePath: string, rodDir: string, filesCreated: string[]): Promise<void> {
     const internalMemoryDir = path.join(templatePath, 'memory');
-    const memoryDestDir = path.join(specifyDir, 'memory');
+    const memoryDestDir = path.join(rodDir, 'memory');
 
     try {
       await fs.access(internalMemoryDir);

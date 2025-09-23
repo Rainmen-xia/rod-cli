@@ -1,7 +1,7 @@
 ---
 description: 基于模块设计文档生成可执行的开发任务清单，支持TDD和并行开发
 scripts:
-  node: node .specify/scripts/generate-module-tasks.js --json
+  node: node .rod/scripts/generate-module-tasks.js --json
 ---
 
 在当前模块目录中基于设计文档生成详细的开发任务清单，为实际编码提供清晰的执行路径。
@@ -21,7 +21,7 @@ scripts:
 3. 如果缺少plan.md，提示用户先执行 `/plan` 完成技术设计
 
 4. 分析设计文档并生成任务：
-   - 使用 `.specify/templates/tasks-template.md` 作为任务模板基础
+   - 使用 `.rod/spec-templates/tasks-template.md` 作为任务模板基础
    - 根据可用文档生成对应任务类型：
      * **环境搭建**：模块初始化、依赖安装、工具配置
      * **测试优先**：契约测试、集成测试（标记[P]支持并行）

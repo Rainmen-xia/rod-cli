@@ -1,7 +1,7 @@
 ---
 description: 创建模块目录结构，为项目组织和开发提供基础架构
 scripts:
-  node: node .specify/scripts/analyze-modules.js --json {ARGS}
+  node: node .rod/scripts/analyze-modules.js --json {ARGS}
 ---
 
 快速创建模块目录结构，支持灵活的项目组织方式。

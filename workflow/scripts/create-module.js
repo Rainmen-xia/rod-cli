@@ -61,7 +61,7 @@ try {
         fs.mkdirSync(path.join(moduleDir, 'modules'), { recursive: true });
 
         // Create template files
-        const templateDir = path.join(repoRoot, '.specify', 'templates');
+        const templateDir = path.join(repoRoot, '.rod', 'spec-templates');
         const filesCreated = [];
 
         // Copy and update spec template

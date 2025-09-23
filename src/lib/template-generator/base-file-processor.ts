@@ -157,8 +157,8 @@ export class BaseFileProcessor {
    */
   async copyScripts(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
     const scriptsSourceDir = path.join(this.templateBasePath, 'scripts');
-    // Scripts always go in .specify directory
-    const scriptsDestDir = path.join(config.projectPath, '.specify', 'scripts');
+    // Scripts always go in .rod directory
+    const scriptsDestDir = path.join(config.projectPath, '.rod', 'scripts');
 
     // For Node.js scripts, copy directly from scripts directory (no subdirectory)
     const sourceDir = scriptsSourceDir;
@@ -211,11 +211,11 @@ export class BaseFileProcessor {
   }
 
   /**
-   * Copy base template files to .specify/templates directory
+   * Copy base template files to .rod/spec-templates directory
    */
   async copyBaseTemplates(templatesDir: string, filesCreated: string[]): Promise<void> {
-    // Copy template files from workflow/command-templates subdirectory (unified structure)
-    const baseTemplatesDir = path.join(this.templateBasePath, 'command-templates');
+    // Copy template files from workflow/spec-templates subdirectory (unified structure)
+    const baseTemplatesDir = path.join(this.templateBasePath, 'spec-templates');
 
     await fs.mkdir(templatesDir, { recursive: true });
 
@@ -236,28 +236,28 @@ export class BaseFileProcessor {
         }
       }
     } catch {
-      // Command templates subdirectory doesn't exist - this shouldn't happen with the new structure
+      // Spec templates subdirectory doesn't exist - this shouldn't happen with the new structure
       // but keep as fallback for compatibility
-      console.warn('Warning: workflow/command-templates directory not found, no base templates copied');
+      console.warn('Warning: workflow/spec-templates directory not found, no base templates copied');
     }
   }
 
   /**
-   * Create .specify directory structure with common content
+   * Create .rod directory structure with common content
    */
-  async createSpecifyDirectory(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
-    const specifyDir = path.join(config.projectPath, '.specify');
-    await fs.mkdir(specifyDir, { recursive: true });
+  async createRODDirectory(config: TemplateGenerationConfig, filesCreated: string[]): Promise<void> {
+    const rodDir = path.join(config.projectPath, '.rod');
+    await fs.mkdir(rodDir, { recursive: true });
 
-    // Create templates subdirectory with base templates
-    const templatesDir = path.join(specifyDir, 'templates');
+    // Create spec-templates subdirectory with base templates
+    const templatesDir = path.join(rodDir, 'spec-templates');
     await this.copyBaseTemplates(templatesDir, filesCreated);
 
     // Create scripts subdirectory with scripts
     await this.copyScripts(config, filesCreated);
 
     // Create memory subdirectory with memory files
-    const memoryDir = path.join(specifyDir, 'memory');
+    const memoryDir = path.join(rodDir, 'memory');
     await this.copyMemoryFiles(memoryDir, filesCreated);
   }
 

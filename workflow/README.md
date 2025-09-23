@@ -27,7 +27,7 @@ workflow/
 │   ├── sync-progress.js      # 进度同步
 │   ├── common.js            # 通用工具函数
 │   └── ...                  # 其他辅助脚本
-└── command-templates/     # 文档模板（必需）
+└── spec-templates/        # 规范文档模板（必需）
     ├── spec-template.md      # 功能规范模板
     ├── plan-template.md      # 技术设计模板
     ├── tasks-template.md     # 任务规划模板
@@ -105,8 +105,8 @@ workflow/
 使用默认模板初始化后，将生成以下结构：
 ```
 my-project/
-├── .specify/
-│   ├── templates/         # 复制的文档模板
+├── .rod/
+│   ├── spec-templates/    # 复制的规范文档模板
 │   │   ├── spec-template.md
 │   │   ├── plan-template.md
 │   │   ├── tasks-template.md
