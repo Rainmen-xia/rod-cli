@@ -70,7 +70,7 @@ src/
 - **Cursor**：创建 `.cursor/commands/` 目录（包含 .md 格式命令，无额外配置文件）
 - **Codebuddy**：创建 `.codebuddy/commands/` 目录（包含 .md 格式命令，无额外配置文件）
 
-**所有AI助手共享**：`.specify/` 目录包含通用内容（templates、scripts、memory）
+**所有AI助手共享**：`.rod/` 目录包含通用内容（templates、scripts、memory）
 
 ### 脚本生成
 - Bash (`sh`)：适用于 Unix/Linux/macOS 的 POSIX 兼容脚本
@@ -101,99 +101,57 @@ src/
 - 跨平台路径处理支持 Windows/Unix 系统
 - 生成脚本的权限管理
 
-## 模板系统架构
+## 模板系统
 
 ### 模板类型
 1. **默认模板**：外网通用的 ROD 工作流模板，位于根目录 `templates/`
-2. **NPM 模板**：腾讯内网专用模板，通过内网 NPM 分发和动态安装
+2. **内部模板**：腾讯内网专用模板，通过内网 NPM 分发，位于 `packages/internal-templates/`
+
+### 创建新工作流模板
+详细的模板创建指导请参阅：[`packages/internal-templates/CREATE-WORKFLOW.md`](packages/internal-templates/CREATE-WORKFLOW.md)
+
+该文档包含：
+- 🎯 设计原则（工作流程优先的设计方法）
+- 📋 六步创建流程（从工作流定义到最终验证）
+- 🔧 测试和验证方法
+- 📚 参考示例（PUI 模板等）
+- 🎯 进阶定制（工作流继承、MCP 集成、企业级扩展）
 
 ### 模板组织结构标准
-
-**所有模板必须遵循统一的组织结构**，以确保 CLI 工具能够正确处理：
-
 ```
 模板目录/
-├── commands/              # AI 命令模板（必需）
-│   ├── command1.md
-│   ├── command2.md
-│   └── ...
-├── scripts/              # bash/powershell 脚本（可选）
-│   ├── bash/
-│   └── powershell/
-├── memory/               # 项目宪法和记忆文件（可选）
-│   └── constitution.md
-├── *.md                  # 文档模板文件（可选）
-└── README.md             # 模板说明
-```
-
-### 默认模板结构
-```
-templates/
-├── commands/              # 通用 AI 命令
-│   ├── module.md
-│   ├── specify.md
-│   ├── plan.md
-│   ├── tasks.md
-│   └── progress.md
-├── scripts/              # 通用脚本
-├── memory/               # 通用项目宪法
-├── roadmap-template.md   # 路线图模板
-├── spec-template.md      # 规格模板
-├── plan-template.md      # 计划模板
-└── tasks-template.md     # 任务模板
-```
-
-### NPM 模板结构
-NPM 模板包名：`@tencent/rod-cli-templates`，包含所有内部模板
-
-```
-@tencent/rod-cli-templates/
-├── pui/                  # PUI 模板（Vue3 + TDesign + 微信支付）
-│   ├── commands/         # PUI 专用命令
-│   │   ├── component.md  # Vue3+PUI 组件开发
-│   │   ├── page.md       # 支付页面开发
-│   │   └── optimize.md   # 项目优化
-│   ├── scripts/          # 可选：PUI 专用脚本
-│   ├── memory/           # 可选：PUI 专用项目宪法
-│   └── README.md
-├── xdc/                  # XDC 模板
-│   ├── commands/
-│   └── ...
-├── package.json          # NPM 包信息
-└── README.md
+├── README.md              # 模板说明
+├── workflow.md           # 工作流程详细定义（核心文件）
+├── commands/             # AI 命令模板（必需）
+├── spec-templates/       # 辅助生成指定的spec文档（推荐）
+├── scripts/             # bash/powershell 脚本（可选）
+├── memory/              # 项目宪法和记忆文件（可选）
+└── rules/               # 规则文件（可选）
 ```
 
 ### CLI 模板生成流程
 
 1. **选择模板源**：
    - 无 `--template` 参数：使用根目录 `templates/`
-   - 有 `--template` 参数：从内网 NPM 安装 `@tencent/rod-cli-templates`
+   - 有 `--template` 参数：从内网模板 `packages/internal-templates/`
 
-2. **NPM 模板处理**：
-   - 检查全局 node_modules 中是否有 `@tencent/rod-cli-templates`
-   - 如未安装，执行全局安装 `npm install -g @tencent/rod-cli-templates`
-   - 直接从全局 node_modules 读取对应模板目录（如 `pui/`）
-   - 后续使用直接从全局包读取
-
-3. **生成 .specify 目录**：
+2. **生成 .rod 目录**：
    ```
-   .specify/
-   ├── templates/        # 复制模板的 commands/ 和 *.md 文件
+   .rod/
+   ├── spec-templates/   # 复制模板的文档模板和工作流定义
    ├── scripts/         # 复制或使用默认脚本
    └── memory/          # 复制或使用默认记忆文件
    ```
 
-4. **生成 AI 助手配置**：
+3. **生成 AI 助手配置**：
    - 根据 `--ai` 参数生成对应目录（`.claude/`、`.codebuddy/` 等）
    - 将模板的 commands/ 转换为对应格式
 
 ### 重要约定
 
-1. **模板分发**：内部模板通过内网 NPM 统一分发，包名 `@tencent/rod-cli-templates`
-2. **全局安装**：模板包采用全局安装机制，利用 npm 的包管理能力
-3. **结构一致性**：所有模板必须使用相同的组织结构
-4. **文件复用**：NPM 模板可以选择性提供 scripts/、memory/，未提供的会使用默认模板
-5. **命名规范**：命令文件统一使用 `.md` 格式，由 CLI 工具转换为对应 AI 助手格式
-6. **版本管理**：使用 `npm update -g @tencent/rod-cli-templates` 更新模板到最新版本
+1. **工作流优先**：所有模板以 `workflow.md` 为核心，定义清晰的工作流程
+2. **结构一致性**：所有模板必须使用相同的组织结构
+3. **文件复用**：内部模板可以选择性提供 scripts/、memory/，未提供的会使用默认模板
+4. **命名规范**：命令文件统一使用 `.md` 格式，由 CLI 工具转换为对应 AI 助手格式
 
 本项目本身采用ROD研发模式，规则文件放在specs目录中。
