@@ -36,11 +36,19 @@
   "author": "rainmen-xia",
   "license": "MIT",
   "dependencies": {
+    "@koa/cors": "^5.0.0",
+    "@koa/router": "^14.0.0",
+    "@types/koa": "^3.0.0",
+    "@types/koa__router": "^12.0.4",
+    "@types/koa-bodyparser": "^4.3.12",
     "chalk": "^4.1.2",
-    "commander": "^11.0.0"
+    "commander": "^11.0.0",
+    "koa": "^3.0.1",
+    "koa-bodyparser": "^4.4.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
+    "@types/koa__cors": "^5.0.0",
     "@types/nock": "^11.1.0",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
