@@ -69,14 +69,18 @@ function isValidCodebuddyOutput(output: string): {
 /**
  * 执行codebuddy命令
  * @param query - 要执行的查询字符串
+ * @param useSession - 是否使用(最近一次)会话
  * @returns Promise that resolves to CodebuddyResult
  */
-export async function codebuddy(query: string): Promise<CodebuddyResult> {
+export async function codebuddy(
+  query: string,
+  useSession: boolean = false
+): Promise<CodebuddyResult> {
   let success = true;
   let output = '';
   try {
     const { stdout, stderr } = await execAsync(
-      `codebuddy -p --dangerously-skip-permissions "${query.replace(/"/g, '\\"')}"`,
+      `codebuddy -p ${useSession ? '-c' : ''} --dangerously-skip-permissions "${query.replace(/"/g, '\\"')}"`,
       {
         encoding: 'utf8',
         maxBuffer: 1024 * 1024 * 10, // 10MB buffer

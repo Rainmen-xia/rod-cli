@@ -14,7 +14,10 @@ import { ExitCode } from '../contracts/cli-interface';
 export interface StartServerArgs {
   port: number;
 }
-
+enum ErrorCode {
+  SUCCESS = 0,
+  ERROR = 1,
+}
 // 跟踪服务器状态
 let serverInstance: Server | null = null;
 let serverPort: number | undefined = undefined;
@@ -48,28 +51,41 @@ app.use(async (ctx, next) => {
 });
 
 router.post('/runCommand', async ctx => {
-  const { query } = ctx.request.body as { query?: string };
-
-  if (!query || typeof query !== 'string') {
-    ctx.status = 400;
-    ctx.body = {
-      error: 'Bad Request',
-      message: 'Query parameter is required and must be a string',
-    };
-    return;
-  }
+  const { query } = ctx.request.body as { query: string };
 
   try {
     const result = await codebuddy(query);
     ctx.body = {
-      code: result.success ? 0 : 1,
+      code: result.success ? ErrorCode.SUCCESS : ErrorCode.ERROR,
       message: result.message,
     };
   } catch (error) {
     const err = error as Error;
     ctx.status = 500;
     ctx.body = {
-      code: 1,
+      code: ErrorCode.ERROR,
+      message: err.message,
+    };
+  }
+});
+
+router.post('/chat', async ctx => {
+  const { query, newChat = false } = ctx.request.body as {
+    query: string;
+    newChat?: boolean;
+  };
+
+  try {
+    const result = await codebuddy(query, !newChat); // 新对话则不使用会话
+    ctx.body = {
+      code: result.success ? ErrorCode.SUCCESS : ErrorCode.ERROR,
+      message: result.message,
+    };
+  } catch (error) {
+    const err = error as Error;
+    ctx.status = 500;
+    ctx.body = {
+      code: ErrorCode.ERROR,
       message: err.message,
     };
   }
