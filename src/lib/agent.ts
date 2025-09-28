@@ -8,52 +8,40 @@ import { promisify } from 'util';
 const execAsync = promisify(exec);
 
 /**
- * 执行codebuddy命令
- * @param query - 要执行的查询字符串
- * @returns Promise that resolves to the command output
+ * Codebuddy执行结果接口
  */
-export async function codebuddy(query: string): Promise<string> {
-  try {
-    const { stdout, stderr } = await execAsync(
-      `codebuddy -p --dangerously-skip-permissions "${query.replace(/"/g, '\\"')}"`,
-      {
-        encoding: 'utf8',
-        maxBuffer: 1024 * 1024 * 10, // 10MB buffer
-      }
-    );
-    return stdout || stderr;
-  } catch (error) {
-    const err = error as ExecException;
-    return err.stdout || err.stderr || err.message || 'Unknown error occurred';
-  }
+export interface CodebuddyResult {
+  success: boolean;
+  message: string;
+}
+
+enum CodebuddyErrorType {
+  SUCCESS = 'SUCCESS',
+  COMMAND_NOT_FOUND = 'COMMAND_NOT_FOUND',
+  LOGIN_REQUIRED = 'LOGIN_REQUIRED',
 }
 
 /**
- * 检查codebuddy命令是否存在且可执行
+ * 检查命令输出是否正常
+ * @param output - 命令输出内容
+ * @returns 是否为正常输出
  */
-export async function isCodebuddyExists() {
-  try {
-    // 尝试获取codebuddy版本信息
-    const { stdout } = await execAsync('codebuddy --version', {
-      encoding: 'utf8',
-      timeout: 5000, // 5秒超时
-    });
-    // 检查是否返回了版本号
-    return stdout.trim().length > 0 && /^\d+\.\d+\.\d+/.test(stdout.trim());
-  } catch (error) {
-    return false;
-  }
-}
+function isValidCodebuddyOutput(output: string): {
+  isValid: boolean;
+  errorType: CodebuddyErrorType;
+} {
+  const lowerOutput = output.toLowerCase();
 
-/**
- * 检查codebuddy登录状态
- */
-export async function isLoginCodebuddy(): Promise<boolean> {
-  // 首先检查命令是否存在
-  const existsCheck = await isCodebuddyExists();
-  if (!existsCheck) {
-    return false;
-  }
+  // 检查命令不存在的模式
+  const commandNotFoundPatterns = [
+    'command not found',
+    'codebuddy: not found',
+    'no such file or directory',
+    'is not recognized as an internal or external command',
+    'codebuddy命令不存在',
+  ];
+
+  // 检查需要登录的模式
   const loginRequiredPatterns = [
     'authentication required',
     'please use /login command',
@@ -62,19 +50,55 @@ export async function isLoginCodebuddy(): Promise<boolean> {
     'not logged in',
     'authentication failed',
     'unauthorized',
+    '请登录',
   ];
+
+  // 检查是否是命令不存在错误
+  if (commandNotFoundPatterns.some(pattern => lowerOutput.includes(pattern))) {
+    return { isValid: false, errorType: CodebuddyErrorType.COMMAND_NOT_FOUND };
+  }
+
+  // 检查是否是登录相关错误
+  if (loginRequiredPatterns.some(pattern => lowerOutput.includes(pattern))) {
+    return { isValid: false, errorType: CodebuddyErrorType.LOGIN_REQUIRED };
+  }
+
+  return { isValid: true, errorType: CodebuddyErrorType.SUCCESS };
+}
+
+/**
+ * 执行codebuddy命令
+ * @param query - 要执行的查询字符串
+ * @returns Promise that resolves to CodebuddyResult
+ */
+export async function codebuddy(query: string): Promise<CodebuddyResult> {
+  let success = true;
+  let output = '';
   try {
-    // 尝试执行一个简单的测试命令来检查登录状态
     const { stdout, stderr } = await execAsync(
-      'codebuddy -p --dangerously-skip-permissions "test"',
+      `codebuddy -p --dangerously-skip-permissions "${query.replace(/"/g, '\\"')}"`,
       {
         encoding: 'utf8',
-        timeout: 10000, // 10秒超时
+        maxBuffer: 1024 * 1024 * 10, // 10MB buffer
       }
     );
-    const output = (stdout || stderr || '').toLowerCase();
-    return !loginRequiredPatterns.some(pattern => output.includes(pattern));
+    output = stdout || stderr || '';
   } catch (error) {
-    return false;
+    const err = error as ExecException;
+    output =
+      err.stdout || err.stderr || err.message || 'Unknown error occurred';
+    success = false; // catch 时，success 为 false
   }
+  console.log(`🚀 ~ codebuddy ~ success: ${success} ~ output:`, output);
+  const validation = isValidCodebuddyOutput(output);
+  if (!validation.isValid) {
+    return {
+      success: false,
+      message: validation.errorType,
+    };
+  }
+  return {
+    success,
+    message: output,
+  };
 }

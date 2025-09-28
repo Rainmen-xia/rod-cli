@@ -62,8 +62,8 @@ router.post('/runCommand', async ctx => {
   try {
     const result = await codebuddy(query);
     ctx.body = {
-      code: 0,
-      message: result,
+      code: result.success ? 0 : 1,
+      message: result.message,
     };
   } catch (error) {
     const err = error as Error;
