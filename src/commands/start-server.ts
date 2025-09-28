@@ -98,27 +98,20 @@ app.use(router.allowedMethods());
 export const executeStartServerCommand = (args: StartServerArgs) => {
   const { port } = args;
   if (isNaN(port) || port < 1 || port > 65535) {
-    console.error(
-      chalk.red('Invalid port number. Port must be between 1 and 65535.')
-    );
+    console.error(chalk.red('Invalid port number. Port must be between 1 and 65535.'));
     process.exit(ExitCode.INVALID_ARGS);
   }
   // 检查服务器是否已经在运行
   if (serverInstance) {
-    console.log(
-      chalk.yellow(
-        `⚠️  Server is already running on http://localhost:${serverPort}`
-      )
-    );
+    console.log(chalk.yellow(`⚠️  Server is already running on http://localhost:${serverPort}`));
     return;
   }
 
   const server = app.listen(port, () => {
     console.log(chalk.green(`🚀 ROD Agent Server started successfully!`));
     console.log(chalk.blue(`   Server running on http://localhost:${port}`));
-    console.log(
-      chalk.blue(`   API endpoint: http://localhost:${port}/runCommand`)
-    );
+    console.log(chalk.blue(`   runCommand endpoint: http://localhost:${port}/runCommand`));
+    console.log(chalk.blue(`   chat endpoint: http://localhost:${port}/chat`));
     console.log(chalk.gray(`   Press Ctrl+C to stop the server`));
   });
 

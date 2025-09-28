@@ -72,10 +72,7 @@ function isValidCodebuddyOutput(output: string): {
  * @param useSession - 是否使用(最近一次)会话
  * @returns Promise that resolves to CodebuddyResult
  */
-export async function codebuddy(
-  query: string,
-  useSession: boolean = false
-): Promise<CodebuddyResult> {
+export async function codebuddy(query: string, useSession: boolean = false): Promise<CodebuddyResult> {
   let success = true;
   let output = '';
   try {
@@ -89,8 +86,7 @@ export async function codebuddy(
     output = stdout || stderr || '';
   } catch (error) {
     const err = error as ExecException;
-    output =
-      err.stdout || err.stderr || err.message || 'Unknown error occurred';
+    output = err.stdout || err.stderr || err.message || 'Unknown error occurred';
     success = false; // catch 时，success 为 false
   }
   console.log(`🚀 ~ codebuddy ~ success: ${success} ~ output:`, output);
